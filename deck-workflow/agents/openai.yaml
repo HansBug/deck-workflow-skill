@@ -1,0 +1,4 @@
+interface:
+  display_name: "Deck Workflow"
+  short_description: "Guide-first workflow for iterative deck production"
+  default_prompt: "Use $deck-workflow to plan, generate, review, and iteratively refine a presentation deck."
