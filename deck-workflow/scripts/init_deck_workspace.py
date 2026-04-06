@@ -72,6 +72,7 @@ def english_guide(title: str, audience: str, duration: int, slides: int, author:
         - Acceptance Criteria:
           - `Rendered deck has no obvious overflow, collision, or clipping`
           - `The final deck matches the slide messages below`
+          - `Internal slide ids such as s01-cover stay in the guide, code, and review notes instead of visible slide text unless explicitly requested`
 
         ## Document Purpose And Usage
 
@@ -91,6 +92,7 @@ def english_guide(title: str, audience: str, duration: int, slides: int, author:
         - Keep visible slide text audience-facing.
         - Keep presenter-facing explanation in speaker notes.
         - Keep one main message per slide.
+        - Keep stable slide ids in the guide, generator, comments, and review notes, not on visible slides unless explicitly requested.
         - Make each slide specific enough that the generator can implement it without guessing.
 
         ## Slide Plan
@@ -150,6 +152,7 @@ def chinese_guide(title: str, audience: str, duration: int, slides: int, author:
         - 改主线、结构、页数、讲稿，先改这份 guide。
         - 改布局、裁图、字号、配色、遮挡，先改 `{generator_name}`。
         - 每次实质修改后都重新渲染检查。
+        - `s01-cover` 这类 slide id 仅用于 guide、代码、review 追踪，不应直接放到观众可见页面上，除非用户明确要求。
 
         ## 总时长分配
 
@@ -161,6 +164,7 @@ def chinese_guide(title: str, audience: str, duration: int, slides: int, author:
         - 所有可见文字都应面向观众，而不是面向讲解者。
         - 讲稿与 note 可以保留讲解者视角，但不要把讲解提示写进可见区。
         - 每页只承担一个主结论或主问题。
+        - slide id 是制作期元数据，不是观众内容。
         - 页面说明必须具体到 generator 可以直接照办。
 
         ## 逐页规划
@@ -173,6 +177,35 @@ def js_template(title: str, author: str) -> str:
     return textwrap.dedent(
         f"""\
         const pptxgen = require("pptxgenjs");
+
+        function buildCover(pptx) {{
+          // Keep stable slide ids in function names, comments, and review notes.
+          // Do not place ids like s01-cover on the visible slide unless explicitly requested.
+          const slide = pptx.addSlide();
+          slide.background = {{ color: "F7F5F1" }};
+          slide.addText("{title}", {{
+            x: 0.7,
+            y: 0.8,
+            w: 10.5,
+            h: 0.6,
+            fontFace: "Aptos Display",
+            fontSize: 24,
+            bold: true,
+            color: "1F2937",
+            margin: 0,
+          }});
+          slide.addText("Replace this placeholder with audience-facing content from PPT_GUIDE.md.", {{
+            x: 0.75,
+            y: 1.6,
+            w: 11.4,
+            h: 0.8,
+            fontFace: "Aptos",
+            fontSize: 14,
+            color: "4B5563",
+            margin: 0,
+          }});
+          slide.addNotes("Backfill presenter notes from PPT_GUIDE.md after implementing the real slides.");
+        }}
 
         async function main() {{
           const pptx = new pptxgen();
@@ -187,30 +220,7 @@ def js_template(title: str, author: str) -> str:
             bodyFontFace: "Aptos",
             lang: "en-US",
           }};
-
-          const slide = pptx.addSlide();
-          slide.background = {{ color: "F7F5F1" }};
-          slide.addText("{title}", {{
-            x: 0.7,
-            y: 0.8,
-            w: 10.5,
-            h: 0.6,
-            fontFace: "Aptos Display",
-            fontSize: 24,
-            bold: true,
-            color: "1F2937",
-            margin: 0,
-          }});
-          slide.addText("Implement slides from PPT_GUIDE.md. Keep guide changes and layout changes separate.", {{
-            x: 0.75,
-            y: 1.6,
-            w: 11.4,
-            h: 0.8,
-            fontFace: "Aptos",
-            fontSize: 14,
-            color: "4B5563",
-            margin: 0,
-          }});
+          buildCover(pptx);
 
           await pptx.writeFile({{ fileName: "deck.pptx" }});
         }}
@@ -245,6 +255,8 @@ def python_template(title: str, author: str) -> str:
 
 
         def build_cover(prs: Presentation) -> None:
+            # Keep stable slide ids in function names, comments, and review notes.
+            # Do not place ids like s01-cover on the visible slide unless explicitly requested.
             slide = prs.slides.add_slide(prs.slide_layouts[6])
             slide.background.fill.solid()
             slide.background.fill.fore_color.rgb = RGBColor(247, 245, 241)
@@ -255,7 +267,7 @@ def python_template(title: str, author: str) -> str:
             run.font.size = Pt(24)
             run.font.bold = True
             subtitle_box = slide.shapes.add_textbox(Inches(0.75), Inches(1.6), Inches(11.4), Inches(0.8))
-            subtitle_box.text_frame.text = "Implement slides from PPT_GUIDE.md. Keep guide changes and layout changes separate."
+            subtitle_box.text_frame.text = "Replace this placeholder with audience-facing content from PPT_GUIDE.md."
             add_notes(slide, "Backfill presenter notes from PPT_GUIDE.md after implementing the real slides.")
 
 
@@ -288,7 +300,7 @@ def js_package_json() -> str:
             "build": "node generate_ppt.js"
           },
           "dependencies": {
-            "pptxgenjs": "^3.13.0"
+            "pptxgenjs": "^4.0.1"
           }
         }
         """
@@ -306,42 +318,62 @@ def python_requirements() -> str:
     )
 
 
-def review_commands(generator_name: str, build_command: str) -> str:
-    return textwrap.dedent(
-        f"""\
-        # Review Commands
+def review_commands(generator_name: str, build_command: str, backend: str) -> str:
+    sections = ["# Review Commands", ""]
+    if backend == "python":
+        sections.append(
+            textwrap.dedent(
+                """\
+                ## Python Environment Setup
 
-        ## Build
+                ```bash
+                python3 -m venv .venv
+                source .venv/bin/activate
+                pip install -r requirements.txt
+                ```
 
-        ```bash
-        {build_command}
-        ```
+                If `python-pptx` or related libraries are missing, try this local environment before falling back to JavaScript.
+                """
+            ).strip()
+        )
+        sections.append("")
+    sections.append(
+        textwrap.dedent(
+            f"""\
+            ## Build
 
-        ## Render To PDF
+            ```bash
+            {build_command}
+            ```
 
-        ```bash
-        soffice --headless --convert-to pdf --outdir rendered deck.pptx
-        ```
+            ## Render To PDF
 
-        ## Render PDF To PNG
+            ```bash
+            soffice --headless --convert-to pdf --outdir rendered deck.pptx
+            ```
 
-        ```bash
-        pdftoppm -png rendered/deck.pdf rendered/slide
-        ```
+            ## Render PDF To PNG
 
-        ## Preferred One-Command Review Path
+            ```bash
+            pdftoppm -png rendered/deck.pdf rendered/slide
+            ```
 
-        ```bash
-        python path/to/render_review.py deck.pptx --output-dir rendered
-        ```
+            ## Preferred One-Command Review Path
 
-        ## Workflow Reminder
+            ```bash
+            python path/to/render_review.py deck.pptx --output-dir rendered
+            ```
 
-        - Change structure, message, timing, or slide order in `PPT_GUIDE.md`.
-        - Change layout, spacing, cropping, fonts, or visual fixes in `{generator_name}`.
-        - Rebuild and rerender after every meaningful edit.
-        """
+            ## Workflow Reminder
+
+            - Change structure, message, timing, or slide order in `PPT_GUIDE.md`.
+            - Change layout, spacing, cropping, fonts, or visual fixes in `{generator_name}`.
+            - Keep stable slide ids in the guide, code, and review notes rather than visible slide text unless explicitly requested.
+            - Rebuild and rerender after every meaningful edit.
+            """
+        ).strip()
     )
+    return "\n\n".join(sections) + "\n"
 
 
 def review_template() -> str:
@@ -439,7 +471,7 @@ def main() -> None:
         write_text(workspace / "generate_ppt.py", python_template(args.title, args.author), args.force)
         write_text(workspace / "requirements.txt", python_requirements(), args.force)
     write_text(workspace / "review" / "notes.md", review_template(), args.force)
-    write_text(workspace / "review" / "commands.md", review_commands(generator_name, build_command), args.force)
+    write_text(workspace / "review" / "commands.md", review_commands(generator_name, build_command, args.backend), args.force)
     touch_keep(workspace / "assets" / ".gitkeep")
     touch_keep(workspace / "rendered" / ".gitkeep")
 

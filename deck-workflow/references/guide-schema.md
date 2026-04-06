@@ -49,7 +49,7 @@ If the deck is meant to be spoken live and the user does not specify otherwise:
 
 Give every slide a stable id, then document the same fields for each slide:
 
-- `slide_id`: Stable id such as `s01-cover`, `s07-results`, `s12-closing`.
+- `slide_id`: Stable id such as `s01-cover`, `s07-results`, `s12-closing`. This is internal production metadata, not default visible slide text.
 - `target_duration`: Optional but strongly recommended for spoken decks.
 - `title`: Visible slide title or `none` if intentionally omitted.
 - `message`: Single main point of the slide.
@@ -68,6 +68,7 @@ Use these defaults unless the task clearly calls for something else:
 - Give each slide one main message.
 - Prefer informative titles over generic section labels.
 - Keep visible text audience-facing.
+- Keep internal slide ids such as `s01-cover` in the guide, code, and review notes rather than on the visible slide unless explicitly requested.
 - Keep presenter cues, narration order, and timing in `speaker_notes`.
 - Call out what the audience should look at first when the slide contains a complex visual.
 - Use `acceptance_checks` to capture likely review failures before coding.
@@ -81,6 +82,7 @@ Speaker notes can stay presenter-facing.
 
 Bad visible text:
 
+- `s01-cover`
 - `先讲背景，再讲方法`
 - `这一页重点强调我们比 baseline 快`
 - `后面一页再解释这里的风险`
@@ -139,6 +141,7 @@ Strong note:
 
 - Keep ids stable after review begins.
 - Use ids in comments, review notes, and commit messages.
+- Treat ids as production-only labels unless the user explicitly wants them shown on the slide.
 - Do not renumber ids just because slides move. Rename only when the slide's role truly changes.
 
 ## Visible Text vs Speaker Notes
@@ -166,6 +169,7 @@ Use acceptance checks to make reviews concrete. Common checks:
 - Visual hierarchy is clear within three seconds.
 - Speaker notes still match the visible slide after edits.
 - Footer or caption does not contain presenter-only instructions.
+- Internal slide ids and workflow labels do not appear on the visible slide unless explicitly requested.
 - The slide can be implemented from the guide without inventing missing structure.
 - The spoken note still sounds natural if read aloud.
 

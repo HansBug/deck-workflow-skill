@@ -72,6 +72,7 @@ Check at least these items:
 - Sufficient contrast for text and key visuals
 - Main chart, table, or screenshot is readable without zooming
 - Highlights or labels are not covering the thing they are meant to explain
+- Internal slide ids, routing labels, and other maker-only metadata are not visible on the slide unless explicitly requested
 - Speaker notes still match the implemented slide
 
 ## Minimum Content Checklist

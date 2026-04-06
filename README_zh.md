@@ -47,6 +47,7 @@
 - 基于渲染结果而不是仅看源码的 review loop
 - 提供一个脚手架脚本，用于初始化新的 deck 工作区
 - 同时给出 JavaScript 和 Python 两类 generator 的制作规范
+- 明确要求像 `s01-cover` 这样的 slide id 只用于源码和 review，不应直接出现在观众可见页面里
 - 提供一个稳定的 `pptx -> pdf -> png` 视觉检查脚本
 - 补充了项目汇报、paper reading、培训、board review、proposal、sales、investor pitch、postmortem 等常见 deck 类型的制作要点
 
@@ -81,6 +82,14 @@ python ./deck-workflow/scripts/init_deck_workspace.py ./tmp/example-deck-python 
   --backend python
 ```
 
+如果当前 Python 缺少 deck 依赖，先尝试在工作区里准备本地虚拟环境：
+
+```bash
+python3 -m venv ./tmp/example-deck-python/.venv
+source ./tmp/example-deck-python/.venv/bin/activate
+pip install -r ./tmp/example-deck-python/requirements.txt
+```
+
 检测当前环境里有哪些后端和 review 工具：
 
 ```bash
@@ -96,8 +105,14 @@ python ./deck-workflow/scripts/render_review.py ./tmp/example-deck/deck.pptx --o
 ## Backend 策略
 
 - 默认优先 Python。
-- 如果 Python 路径不现实，再退到 JavaScript。
+- 如果缺的是 Python 依赖，先尝试工作区本地 `venv` 和 `requirements.txt`，不要一看到 import 缺失就直接退到 JavaScript。
+- 如果 Python 路径仍然不现实，再退到 JavaScript。
 - 如果两者都不合适，也应该保留同样的 guide-first 工作流，而不是直接丢掉上游规范。
+
+## 面向观众的内容规则
+
+- `s01-cover` 这类稳定 slide id 只用于 guide、代码、review note 和提交记录。
+- 除非用户明确要求，否则不要把这些内部 id 直接放到页面可见区。
 
 ## 持久化要求
 

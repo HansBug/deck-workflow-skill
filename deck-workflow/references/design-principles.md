@@ -19,6 +19,7 @@ Use these defaults unless the task or brand clearly calls for something else:
 - Clear visual hierarchy: title, main evidence, takeaway, supporting details.
 - Adequate whitespace instead of squeezing more text into the slide.
 - Audience-facing visible text and presenter-facing speaker notes.
+- Internal production metadata such as slide ids stays off the visible slide unless explicitly requested.
 
 ## Readability
 
@@ -71,6 +72,7 @@ Speaker notes can stay presenter-facing.
 
 Bad visible text:
 
+- `s01-cover`
 - `先讲背景，再讲问题`
 - `这一页主要强调 ROI`
 - `下一页再展开技术细节`
@@ -110,6 +112,7 @@ For spoken decks, especially research talks, project readouts, and training sess
 - Tiny tables that no one can read
 - Colors that change meaning from slide to slide
 - Captions or footers that contain presenter-only directions
+- Internal ids or routing labels leaking into audience-facing content
 - Layouts that only work for one exact text length
 
 ## Public Guidance That Informed This Reference

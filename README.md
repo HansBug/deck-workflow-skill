@@ -47,6 +47,7 @@ The core idea is a standard loop:
 - A review loop based on rendered output rather than source inspection alone
 - A helper script that scaffolds a new deck workspace
 - Backend-specific guidance for both JavaScript and Python generators
+- Rules that keep internal slide ids such as `s01-cover` in source and review artifacts instead of visible slide text
 - A helper script that renders `.pptx -> PDF -> PNG` review artifacts
 - Design guidance for common deck categories such as project updates, paper readings, training, board reviews, proposals, sales decks, investor pitches, and postmortems
 
@@ -81,6 +82,14 @@ python ./deck-workflow/scripts/init_deck_workspace.py ./tmp/example-deck-python 
   --backend python
 ```
 
+Prepare a local Python environment before deciding that Python is unavailable:
+
+```bash
+python3 -m venv ./tmp/example-deck-python/.venv
+source ./tmp/example-deck-python/.venv/bin/activate
+pip install -r ./tmp/example-deck-python/requirements.txt
+```
+
 Detect which backend and review tools are available:
 
 ```bash
@@ -96,8 +105,14 @@ python ./deck-workflow/scripts/render_review.py ./tmp/example-deck/deck.pptx --o
 ## Backend Policy
 
 - Prefer Python first when the repo and environment support it.
-- Fall back to JavaScript when Python is not practical or when you want to align with the official `$slides` skill.
+- If Python deck packages are missing, first try a workspace-local `venv` and install `requirements.txt`.
+- Fall back to JavaScript only when Python is still not practical or when you want to align with the official `$slides` skill.
 - If both are unsuitable, preserve the same guide-first workflow in another stable format rather than abandoning the workflow.
+
+## Audience-Facing Rule
+
+- Stable slide ids such as `s01-cover` are for guides, code, review notes, and commit history.
+- Do not place those ids on visible slides unless the user explicitly requests them.
 
 ## Notes On Persistence
 

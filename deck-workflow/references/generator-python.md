@@ -20,6 +20,7 @@ python path/to/detect_deck_environment.py
 ```
 
 Python is the preferred default path when the repo can support it.
+Do not switch to JavaScript only because the current shell is missing deck packages; try a local virtual environment first.
 
 ## Expected Files
 
@@ -41,16 +42,30 @@ deck-workspace/
 For a practical Python deck workflow:
 
 ```bash
-python3 -m venv venv
-source venv/bin/activate
+python3 -m venv .venv
+source .venv/bin/activate
 pip install python-pptx PyMuPDF Pillow pdf2image
 ```
+
+If `python-pptx` or related libraries are missing, treat this local `venv` path as the first repair step.
+Only move to JavaScript after the Python path is genuinely not practical for the repo.
 
 System tools for real review:
 
 - `soffice`
 - `pdftoppm`
 - Required fonts for the deck
+
+## Practical Workflow
+
+For a real deck, do the implementation in this order:
+
+1. Confirm `PPT_GUIDE.md` is detailed enough to build from.
+2. Create a workspace-local `venv` and install `requirements.txt` if Python deck libraries are missing.
+3. Freeze stable slide ids for review and change routing.
+4. Implement helper functions and slide builders in guide order.
+5. Keep audience-facing text on the slide and presenter-only explanation in notes or in the guide.
+6. Build `deck.pptx`, render it, inspect the output, log issues in `review/notes.md`, and rerender after fixes.
 
 ## Generator Structure
 
@@ -93,12 +108,17 @@ if __name__ == "__main__":
 - Use `Pillow` for image sizing and raster prep.
 - Keep helper functions small enough that later layout fixes remain local.
 - Populate speaker notes if the backend path supports them; otherwise keep them faithfully in the guide.
+- Keep stable slide ids in function names, comments, and review notes rather than visible slide text unless explicitly requested.
+- Keep TODOs, routing labels, and other maker-only metadata out of the visible slide.
 
 ## Review Commands
 
 Typical commands:
 
 ```bash
+python3 -m venv .venv
+source .venv/bin/activate
+pip install -r requirements.txt
 python generate_ppt.py
 soffice --headless --convert-to pdf --outdir rendered deck.pptx
 pdftoppm -png rendered/deck.pdf rendered/slide
@@ -120,3 +140,5 @@ When a human asks for changes:
 - Fixing layout by shrinking fonts too far instead of revising the slide
 - Updating visible text in code while leaving stale speaker notes in the guide
 - Claiming review is done after only looking at object trees or logs
+- Falling back to JavaScript immediately even though a local `venv` would have been enough
+- Internal slide ids such as `s01-cover` leaking onto the visible slide

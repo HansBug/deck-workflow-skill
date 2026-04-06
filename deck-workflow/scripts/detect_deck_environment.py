@@ -56,10 +56,13 @@ def main() -> int:
     commands = {name: command_info(name) for name in COMMANDS}
 
     python_ready = all(info["available"] for info in python_modules.values())
+    python_missing_modules = [package for package, info in python_modules.items() if not info["available"]]
+    python_venv_available = has_module("venv")
+    python_can_be_prepared = bool(sys.executable) and python_venv_available
     js_ready = commands["node"]["available"] and commands["npm"]["available"]
     review_ready = commands["soffice"]["available"] and commands["pdftoppm"]["available"]
 
-    if python_ready:
+    if python_ready or python_can_be_prepared:
         recommended = "python"
     elif js_ready:
         recommended = "javascript"
@@ -69,14 +72,18 @@ def main() -> int:
     payload = {
         "python_executable": sys.executable,
         "python_modules": python_modules,
+        "python_missing_modules": python_missing_modules,
+        "python_venv_available": python_venv_available,
+        "python_can_be_prepared": python_can_be_prepared,
         "commands": commands,
         "python_ready": python_ready,
         "javascript_ready": bool(js_ready),
         "review_ready": bool(review_ready),
         "recommended_backend": recommended,
         "notes": [
-            "Prefer Python when practical.",
-            "Use JavaScript as fallback.",
+            "Prefer Python first when the repo is Python-friendly or can be prepared with a local virtual environment.",
+            "If Python deck libraries are missing, try `python3 -m venv .venv` and install requirements before falling back to JavaScript.",
+            "Use JavaScript as fallback only after the Python path is truly not practical for this repo.",
             "Visual review is not complete unless both soffice and pdftoppm are available.",
             "If the official $slides skill is available, use it alongside this workflow.",
         ],

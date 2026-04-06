@@ -6,8 +6,8 @@ Use this reference when choosing the generator backend and preparing the environ
 
 Use this backend order by default:
 
-1. Python if the environment and project support it
-2. JavaScript if Python is not practical
+1. Python if the environment and project support it, or can reasonably be prepared with a workspace-local virtual environment
+2. JavaScript only after the Python path is genuinely not practical
 3. Another format only if both are unsuitable or the project already has a different stable backend
 
 Also prefer the official `$slides` skill when it is available, especially for PptxGenJS helpers and validation utilities.
@@ -39,10 +39,13 @@ Prefer Python when:
 Typical setup:
 
 ```bash
-python3 -m venv venv
-source venv/bin/activate
+python3 -m venv .venv
+source .venv/bin/activate
 pip install python-pptx PyMuPDF Pillow pdf2image
 ```
+
+Do not treat missing global `python-pptx` imports as an automatic reason to abandon Python.
+If the repo is Python-friendly, first try a workspace-local `venv` and install the needed packages there.
 
 Review-path system tools:
 
@@ -54,7 +57,7 @@ sudo apt-get install libreoffice poppler-utils
 
 Use JavaScript when:
 
-- Python is unavailable or impractical
+- Python is unavailable or remains impractical after trying a workspace-local `venv`
 - The project wants to align with the official `$slides` skill
 - `node` and `npm` are available
 

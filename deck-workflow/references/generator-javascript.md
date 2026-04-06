@@ -19,7 +19,7 @@ Before committing to JavaScript, inspect the environment:
 python path/to/detect_deck_environment.py
 ```
 
-Use JavaScript as the fallback path when Python is not practical or when the project explicitly wants to align with the official `$slides` skill.
+Use JavaScript as the fallback path when Python is not practical after a real attempt to make the Python path work, or when the project explicitly wants to align with the official `$slides` skill.
 
 ## Expected Files
 
@@ -45,6 +45,17 @@ npm install pptxgenjs
 ```
 
 If the official `$slides` skill is available, reuse its helpers and validation utilities instead of rebuilding them locally.
+
+## Practical Workflow
+
+For a real deck, do the implementation in this order:
+
+1. Confirm `PPT_GUIDE.md` is detailed enough to build from.
+2. Freeze stable slide ids for review and change routing.
+3. Set metadata, layout, theme, and reusable helpers near the top of `generate_ppt.js`.
+4. Implement slide builders in guide order.
+5. Keep audience-facing text on the slide and move presenter-only explanation into speaker notes with `slide.addNotes(...)`.
+6. Build `deck.pptx`, render it, inspect the output, log issues in `review/notes.md`, and rerender after fixes.
 
 ## Generator Structure
 
@@ -87,6 +98,9 @@ main().catch((error) => {
 - Keep text content traceable back to `PPT_GUIDE.md`.
 - Prefer native editable slide elements over rasterized text.
 - Keep slide ids in comments or function names so review findings map back cleanly.
+- Keep internal ids such as `s01-cover` out of visible slide text unless the user explicitly requests them.
+- Keep routing labels, TODOs, and other maker-only metadata out of the audience view.
+- Add speaker notes through `slide.addNotes(...)` when presenter guidance matters.
 - Keep asset paths deterministic and local to the workspace.
 
 ## Review Commands
@@ -100,6 +114,15 @@ pdftoppm -png rendered/deck.pdf rendered/slide
 ```
 
 If the official `$slides` skill is available, also use its render and validation scripts.
+
+## Review Checklist
+
+Before sign-off, check at least these items in the rendered output:
+
+- No overflow, collision, clipping, or accidental wrap in titles, chips, captions, or code headers
+- No presenter-only text, internal slide ids, or workflow labels visible on the slide
+- Slide order and visible text still match `PPT_GUIDE.md`
+- Speaker notes still match the implemented slide after edits
 
 ## Change Routing
 
@@ -115,3 +138,5 @@ When a human asks for changes:
 - Slide layout is adjusted but no rerender is reviewed
 - Visual spacing is tuned for one title length and breaks on a later text change
 - Review fixes are applied directly in PowerPoint and not backported into `generate_ppt.js`
+- Internal slide ids such as `s01-cover` leak onto the visible slide
+- Presenter-only hints or workflow reminders are left in the audience-facing content

@@ -20,6 +20,7 @@ Follow these rules whenever the deck is meant to survive more than one quick pas
 - Keep the `.pptx` as a generated artifact, not the only source of truth.
 - Keep rendered outputs or review notes whenever visual QA matters.
 - Route each change into the correct source artifact before regenerating.
+- Keep stable slide ids for review and change routing, but do not surface ids such as `s01-cover` on visible slides unless the user explicitly wants them.
 - Do not declare success without reviewing rendered output.
 
 If a user asks for an existing deck to be changed and no guide exists, reconstruct a minimal guide first before making substantial changes.
@@ -64,6 +65,7 @@ Keep these guide rules:
 
 - Define one deck-level goal so the whole deck has a single main thread.
 - Give every slide a stable slide id once review begins.
+- Treat slide ids as internal production metadata; keep them in the guide, generator, comments, and review notes rather than visible slide text unless explicitly requested.
 - Give every slide one main message, not a bucket of unrelated content.
 - Keep visible text audience-facing; keep presenter instructions in speaker notes or the guide.
 - State what visuals are required and where they come from.
@@ -80,6 +82,7 @@ Implement the generator only after the guide is coherent enough to build against
 Keep these generator rules:
 
 - Match the guide's slide order and slide ids.
+- Keep internal slide ids in code structure, review notes, or comments instead of audience-facing text unless explicitly requested.
 - Keep theme, helper logic, asset prep, and slide builders in source control.
 - Prefer editable text, shapes, and charts whenever practical.
 - Avoid direct manual-only edits to the exported `.pptx` unless the change is truly urgent and then backport it into source immediately.
@@ -105,8 +108,10 @@ Prefer Python when:
 - The deck pipeline depends on `python-pptx`, `PyMuPDF`, `Pillow`, or `pdf2image`.
 - The work includes PDF cropping, image extraction, or document-side preprocessing that already lives in Python.
 - The team is more likely to maintain the generator in Python.
+- The repo can reasonably support a local virtual environment even if the current shell is missing deck libraries.
 
 Do not switch a working project from Python to JavaScript or the reverse without a clear reason.
+Do not fall back from Python to JavaScript only because `python-pptx` or related packages are missing globally; first try a workspace-local `venv` and install the required Python dependencies.
 
 Read [references/backend-setup.md](references/backend-setup.md) before choosing a backend or setting up dependencies.
 
@@ -119,6 +124,7 @@ When using JavaScript:
 - Set slide size, theme fonts, metadata, and output path explicitly.
 - Keep reusable layout helpers and constants near the top of the file or in local helper modules.
 - Keep one slide builder function per slide or per reusable section.
+- Keep stable slide ids in function names, comments, and review notes rather than visible slide text unless explicitly requested.
 - Render and re-review after meaningful edits.
 
 Read [references/generator-javascript.md](references/generator-javascript.md) before building or refactoring a JS generator.
@@ -129,9 +135,11 @@ When using Python:
 
 - Use `generate_ppt.py` as the single entry point.
 - Use `python-pptx` for deck generation and `PyMuPDF`/`Pillow` when source cropping or raster prep is needed.
+- If deck libraries are missing, try `python3 -m venv .venv` plus `pip install -r requirements.txt` before deciding that Python is not practical.
 - Set slide size, fonts, metadata, and output path explicitly.
 - Separate asset preparation, helper utilities, and slide builder functions.
 - Keep source-of-truth text and notes aligned with the guide after every edit.
+- Keep stable slide ids in function names, comments, and review notes rather than visible slide text unless explicitly requested.
 - Render and re-review after meaningful edits.
 
 Read [references/generator-python.md](references/generator-python.md) before building or refactoring a Python generator.
@@ -145,6 +153,7 @@ Follow these review rules:
 - Prefer the stable review path `.pptx -> PDF -> per-slide PNG`.
 - Review rendered output, not only source code or XML.
 - Check for overflow, clipping, overlap, awkward wrapping, weak hierarchy, and unreadable charts or tables.
+- Check that internal ids, routing labels, and other maker-only metadata did not leak into visible slide content.
 - Re-review after fixes because one layout fix often causes another regression.
 - Record issues with slide ids and routing decisions in `review/notes.md`.
 - Do not hand obvious visual bugs to the user as the first review pass if you can catch them yourself.
