@@ -66,6 +66,18 @@ For human feedback:
 4. Make the minimal durable change.
 5. Re-render and close the issue only after visual verification.
 
+## Common Routing Shortcuts
+
+Use these quick mappings when triaging review comments:
+
+- "This slide says the wrong thing" -> `guide`
+- "This slide is too dense" -> usually `both`
+- "The title wraps badly" -> `script`, unless the wording itself should change
+- "The conclusion should move earlier" -> `guide`
+- "The chart is unreadable" -> `script`, sometimes `both` if the slide needs a different evidence strategy
+- "We need a stronger opening for this audience" -> `guide`
+- "This page should become two pages" -> `both`
+
 ## Anti-Patterns
 
 Avoid these shortcuts:

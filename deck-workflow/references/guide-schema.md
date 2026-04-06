@@ -31,6 +31,17 @@ Give every slide a stable id, then document the same fields for each slide:
 - `implementation_notes`: Layout, animation, build hints, or component structure.
 - `acceptance_checks`: What must be visually or semantically true on this slide.
 
+## Slide Writing Rules
+
+Use these defaults unless the task clearly calls for something else:
+
+- Give each slide one main message.
+- Prefer informative titles over generic section labels.
+- Keep visible text audience-facing.
+- Keep presenter cues, narration order, and timing in `speaker_notes`.
+- Call out what the audience should look at first when the slide contains a complex visual.
+- Use `acceptance_checks` to capture likely review failures before coding.
+
 ## Stable Slide Id Rules
 
 - Keep ids stable after review begins.
@@ -61,6 +72,7 @@ Use acceptance checks to make reviews concrete. Common checks:
 - Main chart or image is readable without zooming.
 - Visual hierarchy is clear within three seconds.
 - Speaker notes still match the visible slide after edits.
+- Footer or caption does not contain presenter-only instructions.
 
 ## Recommended Skeleton
 

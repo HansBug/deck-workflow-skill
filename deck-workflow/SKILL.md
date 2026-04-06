@@ -1,6 +1,6 @@
 ---
 name: deck-workflow
-description: Plan, generate, review, and iteratively maintain presentation decks through a guide-first workflow. Use when Codex needs to create or revise slide decks, `.pptx` presentations, pitch decks, training decks, board updates, paper readings, or product reviews and the work should stay editable across multiple rounds. Trigger when the task benefits from keeping a source-of-truth `PPT_GUIDE.md`, a deck generation script, and a render/review loop so human feedback can be routed into guide updates, script fixes, or both.
+description: Plan, generate, review, and iteratively maintain presentation decks through a guide-first workflow. Use when Codex needs to create or revise slide decks, `.pptx` presentations, pitch decks, training decks, board updates, paper readings, product reviews, or other decks that should remain editable across multiple rounds. Trigger when the task benefits from keeping a source-of-truth `PPT_GUIDE.md`, a committed generator such as `generate_ppt.js` or `generate_ppt.py`, and a render/review loop so human feedback can be routed into guide updates, generator fixes, or both.
 ---
 
 # Deck Workflow
@@ -8,82 +8,171 @@ description: Plan, generate, review, and iteratively maintain presentation decks
 ## Overview
 
 Treat deck work as a managed production loop, not a one-shot export.
-Keep a stable source of truth for narrative and structure, a committed generation script for implementation, and rendered review artifacts for QA and incremental fixes.
+Keep a stable source of truth for narrative and structure, a committed generator for implementation, the generated deck file, and rendered review artifacts for QA and incremental fixes.
 
-## Core Artifacts
+## Non-Negotiable Contract
 
-Maintain these artifacts whenever the task is larger than a quick one-off outline:
+Follow these rules whenever the deck is meant to survive more than one quick pass:
 
-- `PPT_GUIDE.md`: Source of truth for goal, audience, slide order, per-slide message, visible text, speaker notes, asset plan, and acceptance checks.
-- `generate_ppt.js` or `generate_ppt.py`: Implementation layer that turns the guide into an editable deck.
-- `review/notes.md`: Running log of review findings, requested changes, and decisions.
-- Rendered artifacts: PDF or per-slide PNG/JPG outputs used for visual inspection.
+- Keep `PPT_GUIDE.md` as the upstream source of truth for deck intent.
+- Keep `generate_ppt.js` or `generate_ppt.py` as the implementation layer.
+- Keep the `.pptx` as a generated artifact, not the only source of truth.
+- Keep rendered outputs or review notes whenever visual QA matters.
+- Route each change into the correct source artifact before regenerating.
+- Do not declare success without reviewing rendered output.
 
-## Workflow
+If a user asks for an existing deck to be changed and no guide exists, reconstruct a minimal guide first before making substantial changes.
 
-1. Initialize a workspace with `scripts/init_deck_workspace.py` or create the same structure manually.
-2. Write `PPT_GUIDE.md` before coding the deck whenever the request involves more than a rough outline.
-3. Implement the deck in a generation script only after the guide is coherent enough to build against.
-4. Render the deck and review visuals before delivery. If the environment already has the official `$slides` skill, use it for low-level authoring helpers and validation.
-5. Capture issues in `review/notes.md` with stable slide ids.
-6. Route each change request to the guide, the script, or both by following [references/change-routing.md](references/change-routing.md).
-7. Re-render after each meaningful change before declaring the deck updated.
+## Standard Production Loop
 
-## Decision Rules
+Follow this loop in order for new decks and most non-trivial revisions:
 
-- Start with the guide when creating a new deck, rewriting deck structure, or responding to narrative/content feedback.
-- Reconstruct a minimal guide first when editing an existing deck that has no maintained source-of-truth document.
-- Preserve a stable slide id per slide once review starts so comments can be mapped cleanly across revisions.
-- Keep visible text separate from speaker notes; do not hide strategy instructions in the deck body.
-- Prefer editable deck elements whenever practical. Do not make the `.pptx` the only authoritative source of truth.
-- Keep the skill general. Put domain-specific logic in the deck workspace, not in this skill.
+1. Inspect the request, constraints, source materials, and any existing deck workspace.
+2. Create or repair `PPT_GUIDE.md` before implementing the deck.
+3. Implement or update `generate_ppt.js` or `generate_ppt.py` to match the guide.
+4. Generate the editable deck file.
+5. Render the deck to PDF or per-slide images.
+6. Review the rendered output and log issues in `review/notes.md`.
+7. Decide whether each issue belongs to the guide, the generator, or both.
+8. Fix the right source artifact.
+9. Rebuild and re-review until the major issues are closed.
+
+Treat the sequence `PPT_GUIDE.md -> generate_ppt.* -> deck file -> rendered review -> source updates -> rerender` as the default contract, not as optional advice.
+
+Read [references/production-loop.md](references/production-loop.md) before handling multi-round work.
+
+## Required Workspace Artifacts
+
+Maintain these artifacts whenever the task is larger than a throwaway draft:
+
+- `PPT_GUIDE.md`: Goal, audience, deck structure, per-slide message, visible text, speaker notes, asset plan, and acceptance checks.
+- `generate_ppt.js` or `generate_ppt.py`: Deterministic generator committed with the deck.
+- `deck.pptx` or another stable output filename: Generated deck artifact.
+- `review/notes.md`: Issue log with stable slide ids and routing decisions.
+- Rendered artifacts: PDF or PNG/JPG outputs used for visual inspection.
+
+Use `scripts/init_deck_workspace.py` to scaffold this structure.
+
+## Guide Rules
+
+Write or reconstruct the guide before building unless the task is a tiny disposable mockup.
+
+Keep these guide rules:
+
+- Define one deck-level goal so the whole deck has a single main thread.
+- Give every slide a stable slide id once review begins.
+- Give every slide one main message, not a bucket of unrelated content.
+- Keep visible text audience-facing; keep presenter instructions in speaker notes or the guide.
+- State what visuals are required and where they come from.
+- State acceptance checks per slide so later review is concrete.
+
+Read [references/guide-schema.md](references/guide-schema.md) when drafting or reconstructing the guide.
+
+## Generator Rules
+
+Implement the generator only after the guide is coherent enough to build against.
+
+Keep these generator rules:
+
+- Match the guide's slide order and slide ids.
+- Keep theme, helper logic, asset prep, and slide builders in source control.
+- Prefer editable text, shapes, and charts whenever practical.
+- Avoid direct manual-only edits to the exported `.pptx` unless the change is truly urgent and then backport it into source immediately.
+- Keep visible text, speaker notes, and deck metadata in sync with the guide.
+- Use stable output paths so review commands and CI-like checks stay repeatable.
+
+If the official `$slides` skill is available and the project is not already committed to another stack, prefer its PptxGenJS helpers and validation utilities for low-level authoring.
 
 ## Backend Choice
 
-- Prefer the environment's established deck backend when editing an existing project.
-- When building from scratch and the official `$slides` skill is available, prefer its PptxGenJS stack and validation utilities.
-- Keep the source script committed alongside the generated deck so later edits remain reproducible.
+Choose the backend deliberately instead of mixing stacks casually.
+
+Prefer JavaScript when:
+
+- The project is new and no backend is established.
+- The official `$slides` skill is available.
+- Editable PowerPoint-native authoring and helper utilities matter most.
+- The deck is heavy on layout composition, charts, or repeatable component logic.
+
+Prefer Python when:
+
+- The existing project is already Python-based.
+- The deck pipeline depends on `python-pptx`, `PyMuPDF`, `Pillow`, or `pdf2image`.
+- The work includes PDF cropping, image extraction, or document-side preprocessing that already lives in Python.
+- The team is more likely to maintain the generator in Python.
+
+Do not switch a working project from Python to JavaScript or the reverse without a clear reason.
+
+## JavaScript Generator Guidance
+
+When using JavaScript:
+
+- Use `generate_ppt.js` as the single entry point.
+- Use `PptxGenJS` for deck generation.
+- Set slide size, theme fonts, metadata, and output path explicitly.
+- Keep reusable layout helpers and constants near the top of the file or in local helper modules.
+- Keep one slide builder function per slide or per reusable section.
+- Render and re-review after meaningful edits.
+
+Read [references/generator-javascript.md](references/generator-javascript.md) before building or refactoring a JS generator.
+
+## Python Generator Guidance
+
+When using Python:
+
+- Use `generate_ppt.py` as the single entry point.
+- Use `python-pptx` for deck generation and `PyMuPDF`/`Pillow` when source cropping or raster prep is needed.
+- Set slide size, fonts, metadata, and output path explicitly.
+- Separate asset preparation, helper utilities, and slide builder functions.
+- Keep source-of-truth text and notes aligned with the guide after every edit.
+- Render and re-review after meaningful edits.
+
+Read [references/generator-python.md](references/generator-python.md) before building or refactoring a Python generator.
+
+## Review Rules
+
+Treat visual review as mandatory for real deck work.
+
+Follow these review rules:
+
+- Prefer the stable review path `.pptx -> PDF -> per-slide PNG`.
+- Review rendered output, not only source code or XML.
+- Check for overflow, clipping, overlap, awkward wrapping, weak hierarchy, and unreadable charts or tables.
+- Re-review after fixes because one layout fix often causes another regression.
+- Record issues with slide ids and routing decisions in `review/notes.md`.
+- Do not hand obvious visual bugs to the user as the first review pass if you can catch them yourself.
+
+Read [references/review-loop.md](references/review-loop.md) before sign-off.
+
+## Editing Existing Decks
+
+When editing an existing deck:
+
+1. Determine whether a maintained guide and generator already exist.
+2. If they exist, reuse them rather than inventing parallel sources.
+3. If they do not exist, reconstruct a minimal `PPT_GUIDE.md` first.
+4. Only then decide whether the requested change belongs to the guide, the generator, or both.
+5. Rebuild and re-review before delivering the revision.
+
+Read [references/change-routing.md](references/change-routing.md) whenever the right edit target is unclear.
+
+## Done Criteria
+
+Do not call the deck update complete until:
+
+- The requested changes live in the correct source artifact.
+- The deck has been regenerated from source.
+- A fresh render has been reviewed.
+- Major visual issues are fixed or explicitly deferred.
+- The guide, generator, and rendered result do not contradict each other.
 
 ## References
 
+- Read [references/production-loop.md](references/production-loop.md) for the mandatory end-to-end iteration loop.
 - Read [references/guide-schema.md](references/guide-schema.md) when drafting or reconstructing `PPT_GUIDE.md`.
-- Read [references/change-routing.md](references/change-routing.md) when deciding whether to edit the guide, the generation script, or both.
-- Read [references/review-loop.md](references/review-loop.md) when setting up QA or deciding whether a deck update is ready to deliver.
+- Read [references/change-routing.md](references/change-routing.md) when deciding whether to edit the guide, the generator, or both.
+- Read [references/generator-javascript.md](references/generator-javascript.md) before using a JS backend.
+- Read [references/generator-python.md](references/generator-python.md) before using a Python backend.
+- Read [references/review-loop.md](references/review-loop.md) before review, re-review, or sign-off.
+- Run `scripts/render_review.py` when you want a stable `.pptx -> PDF -> PNG` review path.
 - Run `scripts/init_deck_workspace.py` to scaffold a new guide-first deck workspace.
-
-Create only the resource directories this skill actually needs. Delete this section if no resources are required.
-
-### scripts/
-Executable code (Python/Bash/etc.) that can be run directly to perform specific operations.
-
-**Examples from other skills:**
-- PDF skill: `fill_fillable_fields.py`, `extract_form_field_info.py` - utilities for PDF manipulation
-- DOCX skill: `document.py`, `utilities.py` - Python modules for document processing
-
-**Appropriate for:** Python scripts, shell scripts, or any executable code that performs automation, data processing, or specific operations.
-
-**Note:** Scripts may be executed without loading into context, but can still be read by Codex for patching or environment adjustments.
-
-### references/
-Documentation and reference material intended to be loaded into context to inform Codex's process and thinking.
-
-**Examples from other skills:**
-- Product management: `communication.md`, `context_building.md` - detailed workflow guides
-- BigQuery: API reference documentation and query examples
-- Finance: Schema documentation, company policies
-
-**Appropriate for:** In-depth documentation, API references, database schemas, comprehensive guides, or any detailed information that Codex should reference while working.
-
-### assets/
-Files not intended to be loaded into context, but rather used within the output Codex produces.
-
-**Examples from other skills:**
-- Brand styling: PowerPoint template files (.pptx), logo files
-- Frontend builder: HTML/React boilerplate project directories
-- Typography: Font files (.ttf, .woff2)
-
-**Appropriate for:** Templates, boilerplate code, document templates, images, icons, fonts, or any files meant to be copied or used in the final output.
-
----
-
-**Not every skill requires all three types of resources.**

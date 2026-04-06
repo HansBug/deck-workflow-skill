@@ -31,9 +31,19 @@ python /home/hansbug/.codex/skills/.system/skill-creator/scripts/quick_validate.
 ```
 
 6. Do not add repo-level clutter inside `deck-workflow/`. Keep the installable skill minimal.
+7. Keep the standard production loop explicit and hard to skip:
+   - `PPT_GUIDE.md`
+   - `generate_ppt.js` or `generate_ppt.py`
+   - generated `.pptx`
+   - rendered review artifacts
+   - routed fixes
+   - rerender
+8. Keep both JavaScript and Python generator guidance maintained. Do not let one backend silently become second-class if the skill claims to support both.
+9. Keep `.pptx -> PDF -> per-slide PNG` as the default stable review path unless a better environment-specific path is clearly available.
 
 ## Preferred Maintenance Direction
 
 - Improve change routing, guide schema, and review-loop quality before adding flashy design advice.
 - Prefer durable workflow improvements over one-off prompt tricks.
 - Prefer reusable scaffolding and validation over large static examples.
+- If the workflow grows, push details into `references/` while keeping `SKILL.md` as a strong but readable operating contract.

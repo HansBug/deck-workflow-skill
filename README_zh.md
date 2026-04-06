@@ -14,12 +14,14 @@
 - 反复进行视觉验收和增量修复
 - 希望把“内容意图”和“实现代码”拆开维护的场景
 
-这套 skill 的核心工作流是：
+这套 skill 的核心工作流是一个标准闭环：
 
 1. 先写 `PPT_GUIDE.md`
 2. 再写 `generate_ppt.*`
-3. 把结果渲染出来做视觉检查
-4. 后续修改时，把改动明确路由到 guide、脚本或两者
+3. 生成可编辑的 `.pptx`
+4. 把结果渲染出来做视觉检查
+5. 后续修改时，把改动明确路由到 guide、脚本或两者
+6. 重新生成并复检，直到主要问题关闭
 
 ## 仓库结构
 
@@ -42,6 +44,8 @@
 - 明确区分 `PPT_GUIDE.md` 和 `generate_ppt.*` 的职责
 - 基于渲染结果而不是仅看源码的 review loop
 - 提供一个脚手架脚本，用于初始化新的 deck 工作区
+- 同时给出 JavaScript 和 Python 两类 generator 的制作规范
+- 提供一个稳定的 `pptx -> pdf -> png` 视觉检查脚本
 
 ## 快速开始
 
@@ -60,6 +64,24 @@ python ./deck-workflow/scripts/init_deck_workspace.py ./tmp/example-deck \
   --audience "Leadership team" \
   --duration-minutes 15 \
   --slides 12
+```
+
+初始化一个 Python 后端的 deck 工作区：
+
+```bash
+python ./deck-workflow/scripts/init_deck_workspace.py ./tmp/example-deck-python \
+  --title "Quarterly Business Review" \
+  --author "HansBug" \
+  --audience "Leadership team" \
+  --duration-minutes 15 \
+  --slides 12 \
+  --backend python
+```
+
+把 deck 渲染成可供视觉检查的 PDF / PNG：
+
+```bash
+python ./deck-workflow/scripts/render_review.py ./tmp/example-deck/deck.pptx --output-dir ./tmp/example-deck/rendered
 ```
 
 ## 安装方式

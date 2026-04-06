@@ -1,4 +1,4 @@
 interface:
   display_name: "Deck Workflow"
-  short_description: "Guide-first workflow for iterative deck production"
-  default_prompt: "Use $deck-workflow to plan, generate, review, and iteratively refine a presentation deck."
+  short_description: "Guide-first deck workflow with enforced review loop"
+  default_prompt: "Use $deck-workflow to run the full deck loop: write or repair PPT_GUIDE.md, update generate_ppt.js or generate_ppt.py, render the deck, review visuals, and iterate."
