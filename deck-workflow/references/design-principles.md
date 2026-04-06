@@ -45,6 +45,13 @@ Do not hard-code one universal font size rule. Use context:
 - If a slide needs too much explanation to be understood, rework the slide before writing even more notes.
 - If a slide routinely exceeds about one minute of speaking time, check whether it should be split.
 
+## Code And Terminal Text
+
+- Render code snippets, inline code labels, shell commands, filenames shown as code, and other code-like visible text in a monospaced font by default.
+- Keep normal prose, slide titles, and explanatory captions in the deck's regular body font unless the user explicitly wants a code-heavy aesthetic.
+- Use monospaced text consistently across the deck so examples, indentation, and punctuation stay legible.
+- If code is shown inside cards or callouts, do not silently fall back to the body font just because the surrounding component is not a dedicated code block.
+
 ## Overflow Repair Order
 
 When text overflows or wraps badly, prefer this order:
@@ -113,6 +120,7 @@ For spoken decks, especially research talks, project readouts, and training sess
 - Colors that change meaning from slide to slide
 - Captions or footers that contain presenter-only directions
 - Internal ids or routing labels leaking into audience-facing content
+- Code examples or command text rendered in proportional body fonts so punctuation and indentation become harder to read
 - Layouts that only work for one exact text length
 
 ## Public Guidance That Informed This Reference

@@ -108,6 +108,7 @@ if __name__ == "__main__":
 - Use `Pillow` for image sizing and raster prep.
 - Keep helper functions small enough that later layout fixes remain local.
 - Populate speaker notes if the backend path supports them; otherwise keep them faithfully in the guide.
+- Render code snippets, terminal commands, inline code labels, and other code-like visible text in a monospaced font rather than the normal body font.
 - Keep stable slide ids in function names, comments, and review notes rather than visible slide text unless explicitly requested.
 - Keep TODOs, routing labels, and other maker-only metadata out of the visible slide.
 
@@ -141,4 +142,5 @@ When a human asks for changes:
 - Updating visible text in code while leaving stale speaker notes in the guide
 - Claiming review is done after only looking at object trees or logs
 - Falling back to JavaScript immediately even though a local `venv` would have been enough
+- Code-like visible text silently rendered in the body font, making indentation, punctuation, or examples harder to read
 - Internal slide ids such as `s01-cover` leaking onto the visible slide

@@ -85,6 +85,7 @@ Keep these generator rules:
 - Keep internal slide ids in code structure, review notes, or comments instead of audience-facing text unless explicitly requested.
 - Keep theme, helper logic, asset prep, and slide builders in source control.
 - Prefer editable text, shapes, and charts whenever practical.
+- Render code snippets, inline code labels, terminal commands, and other code-like visible text in a monospaced font unless the user explicitly wants another treatment.
 - Avoid direct manual-only edits to the exported `.pptx` unless the change is truly urgent and then backport it into source immediately.
 - Keep visible text, speaker notes, and deck metadata in sync with the guide.
 - Use stable output paths so review commands and CI-like checks stay repeatable.
@@ -154,6 +155,7 @@ Follow these review rules:
 - Review rendered output, not only source code or XML.
 - Check for overflow, clipping, overlap, awkward wrapping, weak hierarchy, and unreadable charts or tables.
 - Check that internal ids, routing labels, and other maker-only metadata did not leak into visible slide content.
+- Check that code snippets, inline code labels, and terminal-style text actually render in a monospaced font instead of the body font.
 - Re-review after fixes because one layout fix often causes another regression.
 - Record issues with slide ids and routing decisions in `review/notes.md`.
 - Do not hand obvious visual bugs to the user as the first review pass if you can catch them yourself.

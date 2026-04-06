@@ -47,6 +47,7 @@
 - 基于渲染结果而不是仅看源码的 review loop
 - 提供一个脚手架脚本，用于初始化新的 deck 工作区
 - 同时给出 JavaScript 和 Python 两类 generator 的制作规范
+- 明确要求代码片段、行内代码标签、终端命令等代码相关可见文本默认使用等宽字体
 - 明确要求像 `s01-cover` 这样的 slide id 只用于源码和 review，不应直接出现在观众可见页面里
 - 提供一个稳定的 `pptx -> pdf -> png` 视觉检查脚本
 - 补充了项目汇报、paper reading、培训、board review、proposal、sales、investor pitch、postmortem 等常见 deck 类型的制作要点
@@ -113,6 +114,7 @@ python ./deck-workflow/scripts/render_review.py ./tmp/example-deck/deck.pptx --o
 
 - `s01-cover` 这类稳定 slide id 只用于 guide、代码、review note 和提交记录。
 - 除非用户明确要求，否则不要把这些内部 id 直接放到页面可见区。
+- 代码片段、行内代码标签、终端命令等代码相关可见文本默认应使用等宽字体。
 
 ## 持久化要求
 

@@ -97,6 +97,7 @@ main().catch((error) => {
 - Keep the output filename stable.
 - Keep text content traceable back to `PPT_GUIDE.md`.
 - Prefer native editable slide elements over rasterized text.
+- Render code snippets, terminal commands, inline code labels, and other code-like visible text in a monospaced font instead of the main body font.
 - Keep slide ids in comments or function names so review findings map back cleanly.
 - Keep internal ids such as `s01-cover` out of visible slide text unless the user explicitly requests them.
 - Keep routing labels, TODOs, and other maker-only metadata out of the audience view.
@@ -122,6 +123,7 @@ Before sign-off, check at least these items in the rendered output:
 - No overflow, collision, clipping, or accidental wrap in titles, chips, captions, or code headers
 - No presenter-only text, internal slide ids, or workflow labels visible on the slide
 - Slide order and visible text still match `PPT_GUIDE.md`
+- Code snippets, inline code labels, and terminal-style strings visibly use a monospaced font
 - Speaker notes still match the implemented slide after edits
 
 ## Change Routing
