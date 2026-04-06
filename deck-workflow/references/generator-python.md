@@ -13,6 +13,14 @@ Prefer Python when:
 
 Do not switch a stable JavaScript deck stack to Python without a clear maintenance reason.
 
+Before committing to Python, inspect the environment:
+
+```bash
+python path/to/detect_deck_environment.py
+```
+
+Python is the preferred default path when the repo can support it.
+
 ## Expected Files
 
 Use a workspace like this:

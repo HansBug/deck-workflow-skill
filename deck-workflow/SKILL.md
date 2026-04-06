@@ -14,6 +14,7 @@ Keep a stable source of truth for narrative and structure, a committed generator
 
 Follow these rules whenever the deck is meant to survive more than one quick pass:
 
+- Create the workspace inside the user's repo or another durable project directory, not in a transient scratch directory.
 - Keep `PPT_GUIDE.md` as the upstream source of truth for deck intent.
 - Keep `generate_ppt.js` or `generate_ppt.py` as the implementation layer.
 - Keep the `.pptx` as a generated artifact, not the only source of truth.
@@ -53,6 +54,8 @@ Maintain these artifacts whenever the task is larger than a throwaway draft:
 
 Use `scripts/init_deck_workspace.py` to scaffold this structure.
 
+Read [references/workspace-persistence.md](references/workspace-persistence.md) before creating a new deck workspace.
+
 ## Guide Rules
 
 Write or reconstruct the guide before building unless the task is a tiny disposable mockup.
@@ -65,6 +68,8 @@ Keep these guide rules:
 - Keep visible text audience-facing; keep presenter instructions in speaker notes or the guide.
 - State what visuals are required and where they come from.
 - State acceptance checks per slide so later review is concrete.
+- When the deck is spoken, make speaker notes direct enough that a presenter can read them aloud with minimal improvisation.
+- When the deck will be generated automatically, make slide instructions concrete enough that the generator can implement them without guessing.
 
 Read [references/guide-schema.md](references/guide-schema.md) when drafting or reconstructing the guide.
 
@@ -102,6 +107,8 @@ Prefer Python when:
 - The team is more likely to maintain the generator in Python.
 
 Do not switch a working project from Python to JavaScript or the reverse without a clear reason.
+
+Read [references/backend-setup.md](references/backend-setup.md) before choosing a backend or setting up dependencies.
 
 ## JavaScript Generator Guidance
 
@@ -168,11 +175,16 @@ Do not call the deck update complete until:
 
 ## References
 
+- Read [references/workspace-persistence.md](references/workspace-persistence.md) before creating a workspace so source artifacts live in the user's repo.
 - Read [references/production-loop.md](references/production-loop.md) for the mandatory end-to-end iteration loop.
 - Read [references/guide-schema.md](references/guide-schema.md) when drafting or reconstructing `PPT_GUIDE.md`.
 - Read [references/change-routing.md](references/change-routing.md) when deciding whether to edit the guide, the generator, or both.
+- Read [references/design-principles.md](references/design-principles.md) for reusable visual and audience-facing slide rules.
+- Read [references/deck-types.md](references/deck-types.md) to adapt the workflow to common deck categories.
+- Read [references/backend-setup.md](references/backend-setup.md) before choosing a backend or installing dependencies.
 - Read [references/generator-javascript.md](references/generator-javascript.md) before using a JS backend.
 - Read [references/generator-python.md](references/generator-python.md) before using a Python backend.
 - Read [references/review-loop.md](references/review-loop.md) before review, re-review, or sign-off.
+- Run `scripts/detect_deck_environment.py` to inspect backend and review-tool readiness in the current environment.
 - Run `scripts/render_review.py` when you want a stable `.pptx -> PDF -> PNG` review path.
 - Run `scripts/init_deck_workspace.py` to scaffold a new guide-first deck workspace.

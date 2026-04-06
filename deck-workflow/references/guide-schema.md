@@ -2,6 +2,13 @@
 
 Use this reference when creating or reconstructing a `PPT_GUIDE.md`.
 
+For spoken or high-stakes decks, the guide should be specific enough that:
+
+- the generator can implement each page without guessing what belongs on-screen
+- the presenter can read the notes aloud with only light improvisation
+
+This is stricter than a normal outline.
+
 ## Deck-Level Fields
 
 Include these fields near the top of the guide:
@@ -17,6 +24,27 @@ Include these fields near the top of the guide:
 - `source_materials`: Input docs, screenshots, datasets, prior decks, or templates.
 - `acceptance_criteria`: Conditions that must pass before delivery.
 
+## Recommended Top-Level Sections
+
+For most maintained decks, prefer these sections in order:
+
+1. Working assumptions
+2. Document purpose and how to use the guide
+3. Timing or pacing plan when the deck is spoken
+4. Global production principles
+5. Slide-by-slide production and notes
+
+This structure is especially useful for talks, paper readings, training decks, workshops, and executive presentations that will be revised later.
+
+## Spoken-Deck Defaults
+
+If the deck is meant to be spoken live and the user does not specify otherwise:
+
+- Include a cover slide
+- Include a takeaway or summary slide near the end
+- Include a separate closing slide
+- Keep timing in the guide rather than guessing from slide body length
+
 ## Slide-Level Fields
 
 Give every slide a stable id, then document the same fields for each slide:
@@ -30,6 +58,8 @@ Give every slide a stable id, then document the same fields for each slide:
 - `speaker_notes`: What the presenter should say or emphasize.
 - `implementation_notes`: Layout, animation, build hints, or component structure.
 - `acceptance_checks`: What must be visually or semantically true on this slide.
+- `generator_ready_instructions`: Optional but recommended when the slide is complex; state what the generator should actually build.
+- `presenter_ready_notes`: Optional but recommended when the slide is spoken live; write notes as complete lines a presenter can say.
 
 ## Slide Writing Rules
 
@@ -41,6 +71,69 @@ Use these defaults unless the task clearly calls for something else:
 - Keep presenter cues, narration order, and timing in `speaker_notes`.
 - Call out what the audience should look at first when the slide contains a complex visual.
 - Use `acceptance_checks` to capture likely review failures before coding.
+- If a slide is intended for live presentation, write `speaker_notes` in direct, speakable sentences instead of bullet fragments.
+- If a slide is complex, make `implementation_notes` and `generator_ready_instructions` concrete enough that the generator can follow them without inventing missing structure.
+
+## Visible Text vs Speaker Notes
+
+Visible text must stay audience-facing.
+Speaker notes can stay presenter-facing.
+
+Bad visible text:
+
+- `先讲背景，再讲方法`
+- `这一页重点强调我们比 baseline 快`
+- `后面一页再解释这里的风险`
+
+Good visible text:
+
+- `Current approval flow adds 3 handoffs`
+- `Our system reaches break-even in month 7`
+- `Latency falls after prefix caching`
+
+Good speaker note:
+
+- `先提醒听众这是流程瓶颈页，再按左到右解释 3 个 handoff，最后落到“时间损耗主要来自人工交接”。`
+
+## Generator-Ready Guidance
+
+If another agent or script will implement the deck, slide instructions should answer concrete build questions such as:
+
+- Which visual asset should be used
+- Whether the asset should be cropped, redrawn, or highlighted
+- Which text belongs in the title, body, footer, chip, or caption
+- Which numbers or labels must be emphasized
+- Whether the slide should be one-column, two-column, card-based, or chart-led
+- Whether the slide should reveal content in steps
+
+Avoid vague directions like:
+
+- `make this slide cleaner`
+- `put the method here`
+- `show the experiment result`
+
+Prefer directions like:
+
+- `Use the product screenshot on the left at roughly 55% slide width; place three audience-facing proof points on the right; highlight the approval banner with a thin outline box; keep the footer as a one-line takeaway.`
+
+- `Crop Table 2 from the source PDF, enlarge the right half, highlight the best value with an outline box, and put a three-line takeaway card on the right.`
+
+## Presenter-Ready Notes
+
+When the deck is meant to be spoken live:
+
+- Notes should be complete enough to read aloud.
+- Notes should explain transitions, caveats, and interpretation.
+- Notes should not simply repeat the visible text.
+- Notes can contain timing and pointing cues.
+
+Weak note:
+
+- `背景 -> 问题 -> 方法`
+
+Strong note:
+
+- `这一页先用 10 秒说明现有流程为什么慢，再指左侧流程图的 3 个审批节点，最后用一句话过渡到“所以我们需要自动化方案”。`
 
 ## Stable Slide Id Rules
 
@@ -73,6 +166,8 @@ Use acceptance checks to make reviews concrete. Common checks:
 - Visual hierarchy is clear within three seconds.
 - Speaker notes still match the visible slide after edits.
 - Footer or caption does not contain presenter-only instructions.
+- The slide can be implemented from the guide without inventing missing structure.
+- The spoken note still sounds natural if read aloud.
 
 ## Recommended Skeleton
 
@@ -94,6 +189,17 @@ Use acceptance checks to make reviews concrete. Common checks:
 - Acceptance Criteria:
   - `...`
 
+## Document Purpose And Usage
+
+- This guide is the source of truth for deck intent.
+- Revise this guide first for narrative, audience, timing, and slide-order changes.
+- Revise the generator first for layout, crop, font, and styling changes.
+
+## Timing Plan
+
+- `s01-cover`: `0:30`
+- `s02-context`: `1:00`
+
 ## Slide Plan
 
 ### s01-cover
@@ -108,6 +214,10 @@ Use acceptance checks to make reviews concrete. Common checks:
 - Speaker Notes:
   - `...`
 - Implementation Notes:
+  - `...`
+- Generator-Ready Instructions:
+  - `...`
+- Presenter-Ready Notes:
   - `...`
 - Acceptance Checks:
   - `...`

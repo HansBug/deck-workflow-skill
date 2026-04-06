@@ -13,6 +13,14 @@ Prefer JavaScript when:
 
 Do not migrate an established Python generator to JavaScript without a concrete benefit.
 
+Before committing to JavaScript, inspect the environment:
+
+```bash
+python path/to/detect_deck_environment.py
+```
+
+Use JavaScript as the fallback path when Python is not practical or when the project explicitly wants to align with the official `$slides` skill.
+
 ## Expected Files
 
 Use a workspace like this:

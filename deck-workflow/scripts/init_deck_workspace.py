@@ -4,6 +4,7 @@
 from __future__ import annotations
 
 import argparse
+import sys
 import textwrap
 from pathlib import Path
 
@@ -20,7 +21,7 @@ def slide_id(index: int, total: int) -> str:
     return f"s{index:02d}-{suffix}"
 
 
-def english_guide(title: str, audience: str, duration: int, slides: int, author: str, generator_name: str) -> str:
+def english_guide(title: str, audience: str, duration: int, slides: int, author: str, generator_name: str, backend_name: str) -> str:
     sections = []
     for idx in range(1, slides + 1):
         sid = slide_id(idx, slides)
@@ -39,6 +40,10 @@ def english_guide(title: str, audience: str, duration: int, slides: int, author:
                 - Speaker Notes:
                   - `TODO`
                 - Implementation Notes:
+                  - `TODO`
+                - Generator-Ready Instructions:
+                  - `TODO`
+                - Presenter-Ready Notes:
                   - `TODO`
                 - Acceptance Checks:
                   - `TODO`
@@ -59,7 +64,7 @@ def english_guide(title: str, audience: str, duration: int, slides: int, author:
         - Slide Budget: `{slides}`
         - Presenter: `{author}`
         - Aspect Ratio: `16:9`
-        - Tooling Backend: `TODO`
+        - Tooling Backend: `{backend_name}`
         - Source Materials:
           - `TODO`
         - Style Constraints:
@@ -68,11 +73,25 @@ def english_guide(title: str, audience: str, duration: int, slides: int, author:
           - `Rendered deck has no obvious overflow, collision, or clipping`
           - `The final deck matches the slide messages below`
 
-        ## Workflow Notes
+        ## Document Purpose And Usage
 
+        - This guide is the source of truth for deck intent.
+        - Keep this workspace inside a durable user repo, not in a transient temp directory.
         - Update this guide first for narrative, scope, timing, and slide-order changes.
         - Update `{generator_name}` for layout and implementation changes.
         - Re-render after every meaningful edit.
+
+        ## Timing Plan
+
+        - `s01-cover`: `TODO`
+        - `s02-content-02`: `TODO`
+
+        ## Global Production Principles
+
+        - Keep visible slide text audience-facing.
+        - Keep presenter-facing explanation in speaker notes.
+        - Keep one main message per slide.
+        - Make each slide specific enough that the generator can implement it without guessing.
 
         ## Slide Plan
         """
@@ -80,7 +99,7 @@ def english_guide(title: str, audience: str, duration: int, slides: int, author:
     return header + "\n\n" + "\n\n".join(sections) + "\n"
 
 
-def chinese_guide(title: str, audience: str, duration: int, slides: int, author: str, generator_name: str) -> str:
+def chinese_guide(title: str, audience: str, duration: int, slides: int, author: str, generator_name: str, backend_name: str) -> str:
     sections = []
     for idx in range(1, slides + 1):
         sid = slide_id(idx, slides)
@@ -100,6 +119,10 @@ def chinese_guide(title: str, audience: str, duration: int, slides: int, author:
                   - `TODO`
                 - 实现备注：
                   - `TODO`
+                - 可供 generator 直接照办的说明：
+                  - `TODO`
+                - 可供讲解者直接照念的 note：
+                  - `TODO`
                 - 检查重点：
                   - `TODO`
                 """
@@ -118,13 +141,27 @@ def chinese_guide(title: str, audience: str, duration: int, slides: int, author:
         - 页数：`{slides}`
         - 汇报人：`{author}`
         - 画布：`16:9`
-        - 生成后端：`TODO`
+        - 生成后端：`{backend_name}`
 
-        ## 使用方式
+        ## 文档定位与使用方式
 
+        - 这份 guide 是 deck 内容与结构的上游规范。
+        - 这套工作区应放在用户的持久化 repo 里，而不是临时目录里。
         - 改主线、结构、页数、讲稿，先改这份 guide。
         - 改布局、裁图、字号、配色、遮挡，先改 `{generator_name}`。
         - 每次实质修改后都重新渲染检查。
+
+        ## 总时长分配
+
+        - `s01-cover`：`TODO`
+        - `s02-content-02`：`TODO`
+
+        ## 制作总原则
+
+        - 所有可见文字都应面向观众，而不是面向讲解者。
+        - 讲稿与 note 可以保留讲解者视角，但不要把讲解提示写进可见区。
+        - 每页只承担一个主结论或主问题。
+        - 页面说明必须具体到 generator 可以直接照办。
 
         ## 逐页规划
         """
@@ -292,6 +329,12 @@ def review_commands(generator_name: str, build_command: str) -> str:
         pdftoppm -png rendered/deck.pdf rendered/slide
         ```
 
+        ## Preferred One-Command Review Path
+
+        ```bash
+        python path/to/render_review.py deck.pptx --output-dir rendered
+        ```
+
         ## Workflow Reminder
 
         - Change structure, message, timing, or slide order in `PPT_GUIDE.md`.
@@ -360,10 +403,33 @@ def main() -> None:
 
     generator_name = "generate_ppt.js" if args.backend == "js" else "generate_ppt.py"
     build_command = "node generate_ppt.js" if args.backend == "js" else "python generate_ppt.py"
+    backend_name = "JavaScript / PptxGenJS" if args.backend == "js" else "Python / python-pptx"
 
-    guide = english_guide(args.title, args.audience, args.duration_minutes, args.slides, args.author, generator_name)
+    if workspace.parts[:2] == ("/", "tmp") or str(workspace).startswith("/tmp/"):
+        print(
+            "Warning: the workspace path looks transient. For maintainable deck work, place it inside the user's repo.",
+            file=sys.stderr,
+        )
+
+    guide = english_guide(
+        args.title,
+        args.audience,
+        args.duration_minutes,
+        args.slides,
+        args.author,
+        generator_name,
+        backend_name,
+    )
     if args.language == "zh":
-        guide = chinese_guide(args.title, args.audience, args.duration_minutes, args.slides, args.author, generator_name)
+        guide = chinese_guide(
+            args.title,
+            args.audience,
+            args.duration_minutes,
+            args.slides,
+            args.author,
+            generator_name,
+            backend_name,
+        )
 
     write_text(workspace / "PPT_GUIDE.md", guide, args.force)
     if args.backend == "js":

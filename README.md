@@ -1,5 +1,7 @@
 # deck-workflow-skill
 
+[中文说明 / Chinese README](./README_zh.md)
+
 `deck-workflow-skill` is a repository for a Codex-compatible skill that treats presentation work as an iterative production loop instead of a one-shot deck export.
 
 The installable skill lives in [`deck-workflow/`](./deck-workflow). The repository adds repo-level documentation, maintenance guidance, and version control around that skill.
@@ -46,6 +48,7 @@ The core idea is a standard loop:
 - A helper script that scaffolds a new deck workspace
 - Backend-specific guidance for both JavaScript and Python generators
 - A helper script that renders `.pptx -> PDF -> PNG` review artifacts
+- Design guidance for common deck categories such as project updates, paper readings, training, board reviews, proposals, sales decks, investor pitches, and postmortems
 
 ## Quick Start
 
@@ -78,11 +81,35 @@ python ./deck-workflow/scripts/init_deck_workspace.py ./tmp/example-deck-python 
   --backend python
 ```
 
+Detect which backend and review tools are available:
+
+```bash
+python ./deck-workflow/scripts/detect_deck_environment.py
+```
+
 Render a deck into reviewable PDF/PNG artifacts:
 
 ```bash
 python ./deck-workflow/scripts/render_review.py ./tmp/example-deck/deck.pptx --output-dir ./tmp/example-deck/rendered
 ```
+
+## Backend Policy
+
+- Prefer Python first when the repo and environment support it.
+- Fall back to JavaScript when Python is not practical or when you want to align with the official `$slides` skill.
+- If both are unsuitable, preserve the same guide-first workflow in another stable format rather than abandoning the workflow.
+
+## Notes On Persistence
+
+The deck workspace should live inside the user's repo or another durable project directory.
+Do not keep `PPT_GUIDE.md`, `generate_ppt.*`, and `deck.pptx` only in transient agent directories if the deck is expected to be revised later.
+
+## Recommended Pairing
+
+This skill works well together with the official OpenAI `$slides` skill:
+
+- Use `$deck-workflow` for the high-level production contract, guide writing, change routing, and review loop.
+- Use `$slides` for low-level PptxGenJS helpers, rendering utilities, and deck validation when available.
 
 ## Installation
 

@@ -1,5 +1,7 @@
 # deck-workflow-skill
 
+[English README](./README.md)
+
 `deck-workflow-skill` 是一个 Codex 兼容 skill 的源码仓库。它的目标不是“一次性生成一个 PPT”，而是把 PPT 制作变成一条可反复迭代的生产流程。
 
 真正可安装的 skill 位于 [`deck-workflow/`](./deck-workflow)。仓库根目录补充了 repo 级说明、维护约定和版本管理文件。
@@ -46,6 +48,7 @@
 - 提供一个脚手架脚本，用于初始化新的 deck 工作区
 - 同时给出 JavaScript 和 Python 两类 generator 的制作规范
 - 提供一个稳定的 `pptx -> pdf -> png` 视觉检查脚本
+- 补充了项目汇报、paper reading、培训、board review、proposal、sales、investor pitch、postmortem 等常见 deck 类型的制作要点
 
 ## 快速开始
 
@@ -78,11 +81,35 @@ python ./deck-workflow/scripts/init_deck_workspace.py ./tmp/example-deck-python 
   --backend python
 ```
 
+检测当前环境里有哪些后端和 review 工具：
+
+```bash
+python ./deck-workflow/scripts/detect_deck_environment.py
+```
+
 把 deck 渲染成可供视觉检查的 PDF / PNG：
 
 ```bash
 python ./deck-workflow/scripts/render_review.py ./tmp/example-deck/deck.pptx --output-dir ./tmp/example-deck/rendered
 ```
+
+## Backend 策略
+
+- 默认优先 Python。
+- 如果 Python 路径不现实，再退到 JavaScript。
+- 如果两者都不合适，也应该保留同样的 guide-first 工作流，而不是直接丢掉上游规范。
+
+## 持久化要求
+
+deck 工作区应放在用户自己的 repo 或其他持久目录里。
+如果后续还要继续改，就不要把 `PPT_GUIDE.md`、`generate_ppt.*` 和 `deck.pptx` 只放在临时 agent 目录里。
+
+## 推荐搭配
+
+这个 skill 很适合和 OpenAI 官方 `$slides` skill 配合使用：
+
+- `$deck-workflow` 负责高层流程、guide、改动路由和 review 闭环
+- `$slides` 负责底层 PptxGenJS helper、render 工具和 deck 校验
 
 ## 安装方式
 

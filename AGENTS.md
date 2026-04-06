@@ -40,6 +40,11 @@ python /home/hansbug/.codex/skills/.system/skill-creator/scripts/quick_validate.
    - rerender
 8. Keep both JavaScript and Python generator guidance maintained. Do not let one backend silently become second-class if the skill claims to support both.
 9. Keep `.pptx -> PDF -> per-slide PNG` as the default stable review path unless a better environment-specific path is clearly available.
+10. Keep workspace persistence explicit: the intended home of `PPT_GUIDE.md`, `generate_ppt.*`, and `deck.pptx` is the user's repo, not a transient scratch directory.
+11. Keep the audience-facing vs speaker-facing distinction explicit in the docs and templates:
+   - visible slide text is for the audience
+   - notes are for the presenter
+12. Keep the guidance broad enough to cover common deck categories, not only academic talks.
 
 ## Preferred Maintenance Direction
 
