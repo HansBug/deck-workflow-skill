@@ -22,8 +22,45 @@
 2. 再写 `generate_ppt.*`
 3. 生成可编辑的 `.pptx`
 4. 把结果渲染出来做视觉检查
-5. 后续修改时，把改动明确路由到 guide、脚本或两者
+5. 后续修改时，内容类修改回到 guide，版式或 PPT 实现类修改回到 generator
 6. 重新生成并复检，直到主要问题关闭
+
+## 工作方式
+
+这个 skill 的设计目标不是“一次生成完就结束”，而是形成一条可自迭代的自动化闭环。`PPT_GUIDE.md` 作为持续维护的上游真值，负责承载叙事主线、页面职责、可见文案、公式口径和 notes 口径；`generate_ppt.js` 或 `generate_ppt.py` 作为持续维护的实现层，负责把这份规范稳定地落成可编辑 deck。
+
+闭环的路由点是验收结果：如果渲染后的 deck 已经满意，当前 `PPT_GUIDE.md`、generator 和 `.pptx` 就成为下一轮工作的基线；如果仍需继续修改，内容、叙事、notes、公式口径类问题回到 `PPT_GUIDE.md`，页面布局、渲染、素材摆放或 PPT 实现类问题回到 generator。也正因为这些上游文件会被长期保存在 repo 里并持续更新，后续反馈才可以作为增量迭代处理，而不是每次推倒重来。
+
+```mermaid
+graph TD
+    subgraph S1[持续维护的上游资产]
+      B[PPT_GUIDE.md<br/>叙事与内容的上游真值]
+      C[generate_ppt.js / generate_ppt.py<br/>持续维护的 deck 生成器]
+    end
+    subgraph S2[自动生成与检查产物]
+      D[可编辑的 .pptx deck]
+      E[渲染后的 PDF 和 PNG 检查产物]
+    end
+    A[用户新需求或新反馈] --> B
+    B --> C
+    C --> D
+    D --> E
+    E --> F[验收结果是否满意<br/>是否仍需继续修改]
+    F -->|内容修改| B
+    F -->|版式或PPT修改| C
+    style S1 fill:#F7FBF6,stroke:#BCD7C4,stroke-width:1px
+    style S2 fill:#FFF9F1,stroke:#E8C796,stroke-width:1px
+    classDef input fill:#E8F1FF,stroke:#4F7FD8,color:#123;
+    classDef source fill:#EAF7EF,stroke:#4C9A67,color:#123;
+    classDef output fill:#FFF3E6,stroke:#D98A3A,color:#123;
+    classDef review fill:#FCE8EE,stroke:#C45B7A,color:#123;
+    class A input;
+    class B,C source;
+    class D,E output;
+    class F review;
+```
+
+真正让持续增量更新成为可能的，不是单次生成出来的 `.pptx`，而是 `PPT_GUIDE.md` 和 generator 这对可持续维护的上游资产。guide 用来防止叙事、公式和 notes 漂移，generator 用来防止版式与渲染实现漂移，而渲染与复检闭环则把每一次新需求都变成一次可控的上游增量修改。
 
 ## 仓库结构
 

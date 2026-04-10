@@ -22,8 +22,45 @@ The core idea is a standard loop:
 2. Implement the deck in a generation script.
 3. Generate the editable `.pptx`.
 4. Render and review the result visually.
-5. Route each change back into the guide, the script, or both.
+5. Route content changes back into the guide and layout or deck implementation changes back into the generator.
 6. Rebuild and rerender until the main issues are closed.
+
+## How It Works
+
+This skill is designed as a self-iterating automation loop rather than a one-shot export. `PPT_GUIDE.md` acts as the maintained source of truth for storyline, slide responsibilities, visible text, formula decisions, and speaker notes, while `generate_ppt.js` or `generate_ppt.py` acts as the maintained implementation layer that turns that plan into an editable deck.
+
+The review point is acceptance-driven: if the rendered deck is satisfactory, the maintained guide, generator, and `.pptx` become the next baseline; if more work is needed, content changes route back to `PPT_GUIDE.md`, while layout, rendering, asset placement, or deck implementation changes route back to the generator. Because those upstream files stay in the repo and are revised over time, new feedback can be handled as another incremental pass instead of a restart.
+
+```mermaid
+graph TD
+    subgraph S1[Maintained upstream assets]
+      B[PPT_GUIDE.md<br/>Narrative and content source]
+      C[generate_ppt.js / generate_ppt.py<br/>Maintained deck generator]
+    end
+    subgraph S2[Generated and reviewable outputs]
+      D[Editable .pptx deck]
+      E[Rendered PDF and PNG review artifacts]
+    end
+    A[User request or feedback] --> B
+    B --> C
+    C --> D
+    D --> E
+    E --> F[Review and acceptance<br/>Satisfied or more changes needed]
+    F -->|content updates| B
+    F -->|layout or deck updates| C
+    style S1 fill:#F7FBF6,stroke:#BCD7C4,stroke-width:1px
+    style S2 fill:#FFF9F1,stroke:#E8C796,stroke-width:1px
+    classDef input fill:#E8F1FF,stroke:#4F7FD8,color:#123;
+    classDef source fill:#EAF7EF,stroke:#4C9A67,color:#123;
+    classDef output fill:#FFF3E6,stroke:#D98A3A,color:#123;
+    classDef review fill:#FCE8EE,stroke:#C45B7A,color:#123;
+    class A input;
+    class B,C source;
+    class D,E output;
+    class F review;
+```
+
+In practice, the persistent pair of `PPT_GUIDE.md` plus the generator is what makes continuous incremental updates possible. The guide prevents narrative, formula, and notes drift; the generator prevents layout and rendering drift; and the render/review loop turns each future request into a targeted upstream edit instead of a fragile rewrite.
 
 ## Repository Layout
 
