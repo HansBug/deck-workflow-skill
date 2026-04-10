@@ -46,7 +46,9 @@ At minimum, make the guide answer:
 - What is the deck trying to achieve
 - What each slide should say
 - What belongs on-screen
+- Which formulas or notation must be visible versus note-only
 - What belongs in speaker notes
+- Whether the final deck must embed notes, and whether notes equal the read-aloud script only or script plus explicit supplements
 - What visual evidence or assets are needed
 - What acceptance checks must pass
 
@@ -61,7 +63,9 @@ Generator responsibilities:
 - Translate the guide into editable slide elements
 - Keep slide order and ids aligned with the guide
 - Maintain layout and theme consistency
-- Populate speaker notes where the backend supports them
+- Populate speaker notes when the deck contract requires them
+- Implement a reliable path for important formulas, whether native equations or deterministic assets
+- Validate that required notes were written to the final `.pptx`
 - Produce the same deck again on rerun
 
 Do not treat the exported `.pptx` as the primary editing surface.
@@ -102,6 +106,8 @@ Check for:
 - Misaligned spacing and margins
 - Incorrect or stale content after edits
 - Speaker notes that no longer match the slide
+- Important formulas that render too large, too small, clipped, or unexplained
+- Summary or closing-adjacent slides that drift into long visible text better suited for notes
 
 Write findings to `review/notes.md` with slide ids and routing labels.
 
@@ -110,7 +116,7 @@ Write findings to `review/notes.md` with slide ids and routing labels.
 Use this rule:
 
 - Narrative, message, scope, timing, or slide-order problems -> `PPT_GUIDE.md`
-- Layout, spacing, cropping, font, and rendering problems -> `generate_ppt.*`
+- Layout, spacing, cropping, font, notes persistence, formula rendering, and viewer-specific rendering problems -> `generate_ppt.*`
 - Issues that change both meaning and implementation -> both
 
 Never close a comment only in the exported deck if the real fix belongs upstream.

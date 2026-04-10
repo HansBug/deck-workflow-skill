@@ -52,10 +52,11 @@ For a real deck, do the implementation in this order:
 
 1. Confirm `PPT_GUIDE.md` is detailed enough to build from.
 2. Freeze stable slide ids for review and change routing.
-3. Set metadata, layout, theme, and reusable helpers near the top of `generate_ppt.js`.
-4. Implement slide builders in guide order.
-5. Keep audience-facing text on the slide and move presenter-only explanation into speaker notes with `slide.addNotes(...)`.
-6. Build `deck.pptx`, render it, inspect the output, log issues in `review/notes.md`, and rerender after fixes.
+3. Parse or otherwise map guide-backed note content and formula requirements before implementing the affected slides.
+4. Set metadata, layout, theme, and reusable helpers near the top of `generate_ppt.js`.
+5. Implement slide builders in guide order.
+6. Keep audience-facing text on the slide and move presenter-only explanation into speaker notes with `slide.addNotes(...)`.
+7. Build `deck.pptx`, render it, inspect the output, log issues in `review/notes.md`, and rerender after fixes.
 
 ## Generator Structure
 
@@ -101,8 +102,20 @@ main().catch((error) => {
 - Keep slide ids in comments or function names so review findings map back cleanly.
 - Keep internal ids such as `s01-cover` out of visible slide text unless the user explicitly requests them.
 - Keep routing labels, TODOs, and other maker-only metadata out of the audience view.
-- Add speaker notes through `slide.addNotes(...)` when presenter guidance matters.
+- Add speaker notes through `slide.addNotes(...)` when presenter guidance matters, and keep that text aligned with `PPT_GUIDE.md`.
+- If an important formula must be visible, do not hide it only in notes; use the stack's best reliable equation path or a deterministic asset fallback with recorded source provenance.
+- Keep summary, takeaway, and closing-adjacent visible text in the audience's working language unless the user explicitly requests otherwise.
 - Keep asset paths deterministic and local to the workspace.
+
+## Speaker Notes And Formula Contract
+
+For JavaScript decks, keep the same high-level contract as Python decks:
+
+- `PPT_GUIDE.md` is the authority for note baseline text.
+- The generator should not invent note text beyond explicit guide supplements.
+- Slide count, note count, and guide expectations should remain aligned after insertions or deletions.
+- If the chosen JS stack or the official `$slides` skill provides a stable formula or equation helper, use it for audience-visible formulas.
+- If native-equation support is not reliable in the chosen stack, use a deterministic fallback such as a generated SVG/PNG asset, and still place visible symbol explanations on the slide.
 
 ## Review Commands
 
@@ -121,10 +134,12 @@ If the official `$slides` skill is available, also use its render and validation
 Before sign-off, check at least these items in the rendered output:
 
 - No overflow, collision, clipping, or accidental wrap in titles, chips, captions, or code headers
+- Important formulas render cleanly, fit their containers, and still have visible symbol explanations
 - No presenter-only text, internal slide ids, or workflow labels visible on the slide
 - Slide order and visible text still match `PPT_GUIDE.md`
 - Code snippets, inline code labels, and terminal-style strings visibly use a monospaced font
 - Speaker notes still match the implemented slide after edits
+- Summary and closing-adjacent pages do not drift into long off-audience-language visible prose that should live in notes
 
 ## Change Routing
 
@@ -137,8 +152,10 @@ When a human asks for changes:
 ## Failure Modes To Watch
 
 - The guide changes but generator text stays stale
+- The guide notes change but the JS generator still writes old note text
 - Slide layout is adjusted but no rerender is reviewed
 - Visual spacing is tuned for one title length and breaks on a later text change
 - Review fixes are applied directly in PowerPoint and not backported into `generate_ppt.js`
 - Internal slide ids such as `s01-cover` leak onto the visible slide
 - Presenter-only hints or workflow reminders are left in the audience-facing content
+- Important formulas are reduced to unreadable plain text or hidden entirely in notes

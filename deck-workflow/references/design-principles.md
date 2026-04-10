@@ -44,6 +44,7 @@ Do not hard-code one universal font size rule. Use context:
 - Use cards, chips, footers, and captions carefully; they are common overflow traps.
 - If a slide needs too much explanation to be understood, rework the slide before writing even more notes.
 - If a slide routinely exceeds about one minute of speaking time, check whether it should be split.
+- Summary, takeaway, limitation, and closing-adjacent pages should stay in the audience's working language by default; avoid long secondary-language paragraphs unless the user explicitly wants them.
 
 ## Code And Terminal Text
 
@@ -51,6 +52,16 @@ Do not hard-code one universal font size rule. Use context:
 - Keep normal prose, slide titles, and explanatory captions in the deck's regular body font unless the user explicitly wants a code-heavy aesthetic.
 - Use monospaced text consistently across the deck so examples, indentation, and punctuation stay legible.
 - If code is shown inside cards or callouts, do not silently fall back to the body font just because the surrounding component is not a dedicated code block.
+
+## Formulas And Notation
+
+- Important formulas should appear on-screen when they carry the slide's main claim, method definition, or evidence.
+- Do not drop an unexplained formula into the visible slide; pair it with a conclusion sentence, symbol legend, or tightly adjacent explanation.
+- Prefer compact readable formulas in the main deck over full paper notation when the full expression would break readability.
+- Move boundary conditions, secondary indices, and derivation details into speaker notes or appendix when they are not needed on-screen.
+- Reserve more height for formulas than for ordinary text, especially when sums, limits, stacked subscripts, or long function names are involved.
+- If a formula is tied to a diagram or pipeline, align symbol names with the visible modules so the audience does not have to translate between two vocabularies.
+- Formula rendering must be checked on the actual review path; some backends or viewers render PowerPoint equations larger than expected.
 
 ## Overflow Repair Order
 
@@ -102,6 +113,7 @@ When the deck is meant to be presented live:
 - Notes should explain transitions, caveats, and interpretation that do not belong on-screen.
 - Notes should not contradict the visible slide.
 - Notes may contain presenter cues such as pacing or pointing order.
+- When notes are part of delivery, the final `.pptx` must actually contain them; guide-only notes are not enough.
 
 ## Spoken Deck Defaults
 
@@ -121,6 +133,9 @@ For spoken decks, especially research talks, project readouts, and training sess
 - Captions or footers that contain presenter-only directions
 - Internal ids or routing labels leaking into audience-facing content
 - Code examples or command text rendered in proportional body fonts so punctuation and indentation become harder to read
+- Important formulas left only in notes even though the audience needs them on-screen
+- Formula bands sized like one-line body text, causing clipped limits or oversized display math
+- Summary or closing-adjacent slides carrying long visible text in the wrong audience language when that content should be spoken from notes
 - Layouts that only work for one exact text length
 
 ## Public Guidance That Informed This Reference

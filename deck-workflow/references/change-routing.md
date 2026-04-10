@@ -12,6 +12,8 @@ Route to `PPT_GUIDE.md` first when the request changes:
 - What each slide is trying to say.
 - Which facts, quotes, metrics, or examples belong on-screen.
 - Speaker notes or timing.
+- Whether important formulas belong on-screen, in notes, or in appendix.
+- Which audience language visible text should use on summary or closing slides.
 
 Examples:
 
@@ -29,6 +31,7 @@ Route to `generate_ppt.*` first when the request changes:
 - Theme implementation that is already decided in the guide.
 - Overflow, collisions, contrast, and clipping.
 - Animation order that does not change the slide's message.
+- Formula rendering, equation object sizing, or notes persistence bugs in the exported deck.
 
 Examples:
 
@@ -36,6 +39,8 @@ Examples:
 - "Move the screenshot higher."
 - "The footer is too small."
 - "This slide needs more whitespace."
+- "The equation is clipped in the PDF render."
+- "The final deck has no speaker notes even though the guide does."
 
 ## Edit Both
 
@@ -75,6 +80,8 @@ Use these quick mappings when triaging review comments:
 - "The title wraps badly" -> `script`, unless the wording itself should change
 - "The conclusion should move earlier" -> `guide`
 - "The chart is unreadable" -> `script`, sometimes `both` if the slide needs a different evidence strategy
+- "The equation should be on the slide, not only in the notes" -> usually `guide`, sometimes `both`
+- "The notes do not match the guide anymore" -> usually `script`, sometimes `both` if the guide must change too
 - "We need a stronger opening for this audience" -> `guide`
 - "This page should become two pages" -> `both`
 
@@ -85,4 +92,6 @@ Avoid these shortcuts:
 - Editing only the exported `.pptx` when the issue should live in source.
 - Changing slide order in code without updating the guide.
 - Updating visible text in code while leaving contradictory speaker notes in the guide.
+- Hiding an audience-critical formula only in notes because the visible slide became crowded.
+- Treating "notes exist in memory" as equivalent to "notes were persisted in the final deck file".
 - Treating every request as a visual tweak when the real issue is narrative.

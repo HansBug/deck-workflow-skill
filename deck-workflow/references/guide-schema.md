@@ -21,6 +21,8 @@ Include these fields near the top of the guide:
 - `aspect_ratio`: Usually `16:9` unless the source deck clearly uses another format.
 - `style_constraints`: Brand, tone, typography, color, or template requirements.
 - `tooling_backend`: Preferred generation stack if already known.
+- `notes_policy`: Whether the final deck must embed notes, and whether notes equal the read-aloud script only or script plus explicit supplements.
+- `audience_language`: Primary language expected in visible text.
 - `source_materials`: Input docs, screenshots, datasets, prior decks, or templates.
 - `acceptance_criteria`: Conditions that must pass before delivery.
 
@@ -44,6 +46,7 @@ If the deck is meant to be spoken live and the user does not specify otherwise:
 - Include a takeaway or summary slide near the end
 - Include a separate closing slide
 - Keep timing in the guide rather than guessing from slide body length
+- Treat `PPT_GUIDE.md` as the source of truth for speaker notes when the final deck must embed them
 
 ## Slide-Level Fields
 
@@ -51,11 +54,16 @@ Give every slide a stable id, then document the same fields for each slide:
 
 - `slide_id`: Stable id such as `s01-cover`, `s07-results`, `s12-closing`. This is internal production metadata, not default visible slide text.
 - `target_duration`: Optional but strongly recommended for spoken decks.
+- `cumulative_time`: Optional but recommended for spoken decks that are tightly timed.
 - `title`: Visible slide title or `none` if intentionally omitted.
+- `subtitle`: Optional subtitle, kicker, or framing line.
 - `message`: Single main point of the slide.
 - `visible_text`: Bullets, chips, labels, numbers, or tables that belong on-screen.
 - `visuals`: Required assets, charts, diagrams, screenshots, or crops.
+- `formula_requirements`: Optional but strongly recommended when a slide contains important formulas, notation, loss functions, or complexity expressions.
+- `symbol_explanations`: Optional visible or note-only symbol meanings for important formulas.
 - `speaker_notes`: What the presenter should say or emphasize.
+- `notes_supplement`: Optional additional cues that should be appended to the read-aloud baseline when the final deck embeds notes.
 - `implementation_notes`: Layout, animation, build hints, or component structure.
 - `acceptance_checks`: What must be visually or semantically true on this slide.
 - `generator_ready_instructions`: Optional but recommended when the slide is complex; state what the generator should actually build.
@@ -70,10 +78,25 @@ Use these defaults unless the task clearly calls for something else:
 - Keep visible text audience-facing.
 - Keep internal slide ids such as `s01-cover` in the guide, code, and review notes rather than on the visible slide unless explicitly requested.
 - Keep presenter cues, narration order, and timing in `speaker_notes`.
+- When the final deck must embed notes, treat `speaker_notes` as the minimum baseline and put extra cues in `notes_supplement` rather than inventing them in code.
 - Call out what the audience should look at first when the slide contains a complex visual.
 - Use `acceptance_checks` to capture likely review failures before coding.
 - If a slide is intended for live presentation, write `speaker_notes` in direct, speakable sentences instead of bullet fragments.
+- If a slide contains an important formula, explain which symbols must be visible, which details can stay in notes, and whether the main deck should use a compact or full form.
 - If a slide is complex, make `implementation_notes` and `generator_ready_instructions` concrete enough that the generator can follow them without inventing missing structure.
+
+## Formula Guidance In The Guide
+
+When a slide contains formulas or non-trivial notation:
+
+- State whether the formula must appear on-screen or may stay in notes/appendix.
+- Record whether the slide should use a compact main-deck form or a fuller expression.
+- Identify which symbols must be explained on-screen.
+- Identify which terms or indices can remain in notes.
+- Tie the formula to the slide's diagram, figure, table, or spoken explanation order.
+- Add acceptance checks for formula fit, readability, and alignment with neighboring content.
+
+Do not leave formula handling implicit if another agent or generator will implement the deck.
 
 ## Visible Text vs Speaker Notes
 
@@ -96,6 +119,17 @@ Good visible text:
 Good speaker note:
 
 - `先提醒听众这是流程瓶颈页，再按左到右解释 3 个 handoff，最后落到“时间损耗主要来自人工交接”。`
+
+## Speaker Notes As A Deliverable
+
+When the final deck must contain speaker notes:
+
+- `PPT_GUIDE.md` is the authority for the note baseline.
+- Every slide should have a note entry unless the guide explicitly says otherwise.
+- `notes_supplement` is for presenter cues, pauses, pointing order, or hidden reminders that are still intentionally part of deck notes.
+- The generator should not invent note text outside that contract.
+- Slide count, guide note count, and final note count should match.
+- Update notes when visible text changes or explicitly confirm the notes still match.
 
 ## Generator-Ready Guidance
 
@@ -166,8 +200,10 @@ Use acceptance checks to make reviews concrete. Common checks:
 - Title and takeaway fit on one line or wrap intentionally.
 - No text collision, overflow, or cut-off.
 - Main chart or image is readable without zooming.
+- Important formulas render cleanly and have enough space for limits, subscripts, and neighboring explanations.
 - Visual hierarchy is clear within three seconds.
 - Speaker notes still match the visible slide after edits.
+- Required notes are present in the final deck rather than only in the guide.
 - Footer or caption does not contain presenter-only instructions.
 - Internal slide ids and workflow labels do not appear on the visible slide unless explicitly requested.
 - The slide can be implemented from the guide without inventing missing structure.
@@ -188,6 +224,8 @@ Use acceptance checks to make reviews concrete. Common checks:
 - Aspect Ratio: `16:9`
 - Style Constraints: `...`
 - Tooling Backend: `...`
+- Notes Policy: `...`
+- Audience Language: `...`
 - Source Materials:
   - `...`
 - Acceptance Criteria:
@@ -209,14 +247,22 @@ Use acceptance checks to make reviews concrete. Common checks:
 ### s01-cover
 
 - Target Duration: `0:30`
+- Cumulative Time: `0:30`
 - Title: `...`
+- Subtitle: `...`
 - Message: `...`
 - Visible Text:
   - `...`
 - Visuals:
   - `...`
+- Formula Requirements:
+  - `None`
+- Symbol Explanations:
+  - `None`
 - Speaker Notes:
   - `...`
+- Notes Supplement:
+  - `None`
 - Implementation Notes:
   - `...`
 - Generator-Ready Instructions:

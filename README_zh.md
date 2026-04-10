@@ -48,6 +48,8 @@
 - 提供一个脚手架脚本，用于初始化新的 deck 工作区
 - 同时给出 JavaScript 和 Python 两类 generator 的制作规范
 - 明确要求代码片段、行内代码标签、终端命令等代码相关可见文本默认使用等宽字体
+- 明确补充了重要公式的工作流规范：什么时候必须上屏、如何解释符号、以及如何做渲染验收
+- 明确补充了 speaker notes 交付规范：notes 以 guide 为准、最终 `.pptx` 必须真正写入 notes、并且要校验和 guide 一致
 - 明确要求像 `s01-cover` 这样的 slide id 只用于源码和 review，不应直接出现在观众可见页面里
 - 提供一个稳定的 `pptx -> pdf -> png` 视觉检查脚本
 - 补充了项目汇报、paper reading、培训、board review、proposal、sales、investor pitch、postmortem 等常见 deck 类型的制作要点
@@ -115,6 +117,8 @@ python ./deck-workflow/scripts/render_review.py ./tmp/example-deck/deck.pptx --o
 - `s01-cover` 这类稳定 slide id 只用于 guide、代码、review note 和提交记录。
 - 除非用户明确要求，否则不要把这些内部 id 直接放到页面可见区。
 - 代码片段、行内代码标签、终端命令等代码相关可见文本默认应使用等宽字体。
+- 如果公式承载页面主论点，默认应真正上屏，并给出面向观众的符号解释。
+- 如果最终 deck 需要可直接照念，必须让 speaker notes 和 `PPT_GUIDE.md` 同步，并确认导出的 `.pptx` 里真的带有 notes。
 
 ## 持久化要求
 

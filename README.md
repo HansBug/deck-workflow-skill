@@ -48,6 +48,8 @@ The core idea is a standard loop:
 - A helper script that scaffolds a new deck workspace
 - Backend-specific guidance for both JavaScript and Python generators
 - An explicit rule that code snippets, inline code labels, and terminal-style text should use monospaced fonts
+- Explicit workflow rules for important formulas: when they belong on-screen, how to explain symbols, and how to review render risks
+- Explicit workflow rules for speaker-note delivery: guide-backed notes, final-deck persistence checks, and notes/guide alignment
 - Rules that keep internal slide ids such as `s01-cover` in source and review artifacts instead of visible slide text
 - A helper script that renders `.pptx -> PDF -> PNG` review artifacts
 - Design guidance for common deck categories such as project updates, paper readings, training, board reviews, proposals, sales decks, investor pitches, and postmortems
@@ -115,6 +117,8 @@ python ./deck-workflow/scripts/render_review.py ./tmp/example-deck/deck.pptx --o
 - Stable slide ids such as `s01-cover` are for guides, code, review notes, and commit history.
 - Do not place those ids on visible slides unless the user explicitly requests them.
 - Render code snippets, inline code labels, shell commands, and similar code-like visible text in a monospaced font by default.
+- When formulas are central to the slide's argument, keep them visible and explain the key symbols for the audience.
+- If the final deck must be speakable, keep speaker notes in sync with `PPT_GUIDE.md` and verify that the exported `.pptx` actually contains them.
 
 ## Notes On Persistence
 

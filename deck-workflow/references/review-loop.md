@@ -72,8 +72,11 @@ Check at least these items:
 - Sufficient contrast for text and key visuals
 - Main chart, table, or screenshot is readable without zooming
 - Highlights or labels are not covering the thing they are meant to explain
+- Important formulas fit their containers, render at the right visual scale, and keep subscripts, superscripts, or limits readable
+- Formula slides still explain what the key symbols mean somewhere visible on the slide
 - Internal slide ids, routing labels, and other maker-only metadata are not visible on the slide unless explicitly requested
 - Speaker notes still match the implemented slide
+- Summary, takeaway, and closing-adjacent pages do not carry long visible text that belongs in notes
 
 ## Minimum Content Checklist
 
@@ -84,6 +87,8 @@ Check at least these items:
 - Key numbers, names, labels, and claims are accurate
 - Human feedback has actually been incorporated
 - The generator did not silently drift away from the guide
+- Guide-required formulas are either present on the slide or explicitly replaced in an approved way
+- If the deck must embed notes, the final `.pptx` still contains notes for the expected slides
 
 ## Review Logging
 
@@ -96,6 +101,18 @@ For each issue, capture:
 - Severity or urgency if relevant
 - Routing label: `guide`, `script`, or `both`
 - Status: `open`, `closed`, or `deferred`
+
+## Useful Automated Checks
+
+Before or alongside manual review, scripted checks can help confirm:
+
+- Slide count matches the guide
+- Required assets exist
+- The final `.pptx` contains `ppt/notesSlides/notesSlide*.xml` when notes are required
+- Notes count matches slide count
+- Sampled or full note text still matches the guide baseline
+
+These checks are useful, but they do not replace rendered review for formula pages, dense summary pages, or other high-risk visual cases.
 
 ## Exit Rule
 

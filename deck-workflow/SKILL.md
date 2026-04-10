@@ -21,6 +21,8 @@ Follow these rules whenever the deck is meant to survive more than one quick pas
 - Keep rendered outputs or review notes whenever visual QA matters.
 - Route each change into the correct source artifact before regenerating.
 - Keep stable slide ids for review and change routing, but do not surface ids such as `s01-cover` on visible slides unless the user explicitly wants them.
+- Treat speaker notes as a deliverable when the deck is meant to be presented, not as optional guide-only prose.
+- Put important formulas on-screen when they carry the core argument, and explain their symbols and meaning for the audience.
 - Do not declare success without reviewing rendered output.
 
 If a user asks for an existing deck to be changed and no guide exists, reconstruct a minimal guide first before making substantial changes.
@@ -47,7 +49,7 @@ Read [references/production-loop.md](references/production-loop.md) before handl
 
 Maintain these artifacts whenever the task is larger than a throwaway draft:
 
-- `PPT_GUIDE.md`: Goal, audience, deck structure, per-slide message, visible text, speaker notes, asset plan, and acceptance checks.
+- `PPT_GUIDE.md`: Goal, audience, deck structure, per-slide message, visible text, formulas, speaker notes, asset plan, and acceptance checks.
 - `generate_ppt.js` or `generate_ppt.py`: Deterministic generator committed with the deck.
 - `deck.pptx` or another stable output filename: Generated deck artifact.
 - `review/notes.md`: Issue log with stable slide ids and routing decisions.
@@ -71,9 +73,12 @@ Keep these guide rules:
 - State what visuals are required and where they come from.
 - State acceptance checks per slide so later review is concrete.
 - When the deck is spoken, make speaker notes direct enough that a presenter can read them aloud with minimal improvisation.
+- When the final deck needs embedded notes, state whether notes equal the read-aloud script only or script plus explicit supplements.
+- When a slide needs an important formula, state the expression, compact-vs-full choice, visible symbol explanations, speaking order, and layout requirements.
 - When the deck will be generated automatically, make slide instructions concrete enough that the generator can implement them without guessing.
 
 Read [references/guide-schema.md](references/guide-schema.md) when drafting or reconstructing the guide.
+Read [references/formulas-and-notes.md](references/formulas-and-notes.md) when the deck contains formulas, mathematical notation, or embedded speaker notes.
 
 ## Generator Rules
 
@@ -88,6 +93,8 @@ Keep these generator rules:
 - Render code snippets, inline code labels, terminal commands, and other code-like visible text in a monospaced font unless the user explicitly wants another treatment.
 - Avoid direct manual-only edits to the exported `.pptx` unless the change is truly urgent and then backport it into source immediately.
 - Keep visible text, speaker notes, and deck metadata in sync with the guide.
+- If notes must be embedded, verify the final `.pptx` actually contains notes for the expected slides.
+- If formulas are important, use a reliable native-equation or deterministic asset path and treat formula pages as high-risk render-review pages.
 - Use stable output paths so review commands and CI-like checks stay repeatable.
 
 If the official `$slides` skill is available and the project is not already committed to another stack, prefer its PptxGenJS helpers and validation utilities for low-level authoring.
@@ -154,6 +161,8 @@ Follow these review rules:
 - Prefer the stable review path `.pptx -> PDF -> per-slide PNG`.
 - Review rendered output, not only source code or XML.
 - Check for overflow, clipping, overlap, awkward wrapping, weak hierarchy, and unreadable charts or tables.
+- Check important formulas for clipping, oversized display rendering, unreadable subscripts/superscripts, and missing symbol explanations.
+- Check that required speaker notes are present in the final deck and still match `PPT_GUIDE.md`.
 - Check that internal ids, routing labels, and other maker-only metadata did not leak into visible slide content.
 - Check that code snippets, inline code labels, and terminal-style text actually render in a monospaced font instead of the body font.
 - Re-review after fixes because one layout fix often causes another regression.
@@ -189,6 +198,7 @@ Do not call the deck update complete until:
 - Read [references/workspace-persistence.md](references/workspace-persistence.md) before creating a workspace so source artifacts live in the user's repo.
 - Read [references/production-loop.md](references/production-loop.md) for the mandatory end-to-end iteration loop.
 - Read [references/guide-schema.md](references/guide-schema.md) when drafting or reconstructing `PPT_GUIDE.md`.
+- Read [references/formulas-and-notes.md](references/formulas-and-notes.md) when formulas, mathematical notation, embedded notes, or speakable deck delivery matter.
 - Read [references/change-routing.md](references/change-routing.md) when deciding whether to edit the guide, the generator, or both.
 - Read [references/design-principles.md](references/design-principles.md) for reusable visual and audience-facing slide rules.
 - Read [references/deck-types.md](references/deck-types.md) to adapt the workflow to common deck categories.

@@ -35,6 +35,8 @@ Prefer Python when:
 - The repo already uses Python
 - `python-pptx` and related libraries are or can be installed
 - PDF cropping or image preparation is part of the job
+- The deck must embed validated speaker notes and the repo is comfortable maintaining explicit save-and-verify logic
+- Important formulas or symbolic notation need a controlled implementation path, even if that means OMML helpers plus extra render validation
 
 Typical setup:
 
@@ -78,6 +80,14 @@ Regardless of backend, the stable review path is:
 2. Convert `.pptx` to PDF with `soffice`
 3. Convert PDF to PNG with `pdftoppm`
 4. Let Codex inspect those PNGs
+
+If notes are part of delivery, also validate the final `.pptx` itself:
+
+- Notes count matches slide count
+- Expected `notesSlides` parts exist
+- Sampled or full notes still match `PPT_GUIDE.md`
+
+If formulas are important, expect manual review of the rendered formula pages even after the structural checks pass.
 
 If `soffice` or `pdftoppm` is missing, install them before claiming visual review is complete.
 
