@@ -79,7 +79,7 @@ Regardless of backend, the stable review path is:
 1. Generate `.pptx`
 2. Convert `.pptx` to PDF with `soffice`
 3. Convert PDF to PNG with `pdftoppm`
-4. Let Codex inspect those PNGs
+4. Let the agent inspect those PNGs
 
 If notes are part of delivery, also validate the final `.pptx` itself:
 

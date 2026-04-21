@@ -1,6 +1,6 @@
 ---
 name: deck-workflow
-description: Plan, generate, review, and iteratively maintain presentation decks through a guide-first workflow. Use when Codex needs to create or revise slide decks, `.pptx` presentations, pitch decks, training decks, board updates, paper readings, product reviews, or other decks that should remain editable across multiple rounds. Trigger when the task benefits from keeping a source-of-truth `PPT_GUIDE.md`, a committed generator such as `generate_ppt.js` or `generate_ppt.py`, and a render/review loop so human feedback can be routed into guide updates, generator fixes, or both.
+description: Plan, generate, review, and iteratively maintain presentation decks through a guide-first workflow. Use when the agent needs to create or revise slide decks, `.pptx` presentations, pitch decks, training decks, board updates, paper readings, product reviews, or other decks that should remain editable across multiple rounds. Trigger when the task benefits from keeping a source-of-truth `PPT_GUIDE.md`, a committed generator such as `generate_ppt.js` or `generate_ppt.py`, and a render/review loop so human feedback can be routed into guide updates, generator fixes, or both.
 ---
 
 # Deck Workflow

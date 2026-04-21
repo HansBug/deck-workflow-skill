@@ -2,7 +2,7 @@
 
 [中文说明 / Chinese README](./README_zh.md)
 
-`deck-workflow-skill` is a repository for a Codex-compatible skill that treats presentation work as an iterative production loop instead of a one-shot deck export.
+`deck-workflow-skill` is a repository for an agent skill that treats presentation work as an iterative production loop instead of a one-shot deck export. The skill works with both OpenAI Codex (`$deck-workflow`) and Anthropic Claude Code (`/deck-workflow`, or auto-triggered from the `description` in `SKILL.md`).
 
 The installable skill lives in [`deck-workflow/`](./deck-workflow). The repository adds repo-level documentation, maintenance guidance, and version control around that skill.
 
@@ -67,12 +67,13 @@ In practice, the persistent pair of `PPT_GUIDE.md` plus the generator is what ma
 ```text
 .
 ├── AGENTS.md
+├── CLAUDE.md -> AGENTS.md        # symlink, so both agents see the same project instruction
 ├── LICENSE
 ├── README.md
 ├── README_zh.md
-└── deck-workflow/
-    ├── SKILL.md
-    ├── agents/openai.yaml
+└── deck-workflow/                # installable skill directory
+    ├── SKILL.md                  # skill body both Codex and Claude Code load
+    ├── agents/openai.yaml        # Codex-only UI metadata; Claude Code ignores it
     ├── references/
     └── scripts/
 ```
@@ -171,13 +172,43 @@ This skill works well together with the official OpenAI `$slides` skill:
 
 ## Installation
 
-To use the skill directly with Codex, copy or symlink `deck-workflow/` into your Codex skills directory:
+### Codex CLI
 
 ```bash
 cp -R ./deck-workflow "${CODEX_HOME:-$HOME/.codex}/skills/"
 ```
 
-Or point Codex at the local path if your environment supports explicit skill paths.
+Or, to keep a single working copy the skill directory just points at:
+
+```bash
+ln -s "$(pwd)/deck-workflow" "${CODEX_HOME:-$HOME/.codex}/skills/deck-workflow"
+```
+
+Invoke it explicitly as `$deck-workflow`.
+
+### Claude Code
+
+```bash
+cp -R ./deck-workflow "${CLAUDE_CONFIG_DIR:-$HOME/.claude}/skills/"
+```
+
+Or with a symlink:
+
+```bash
+ln -s "$(pwd)/deck-workflow" "${CLAUDE_CONFIG_DIR:-$HOME/.claude}/skills/deck-workflow"
+```
+
+Invoke it explicitly as `/deck-workflow`, or let Claude Code auto-trigger it from the `description` in `SKILL.md`.
+
+### Shared Install (Both)
+
+Clone once and symlink `deck-workflow/` into each CLI's skills directory:
+
+```bash
+git clone https://github.com/HansBug/deck-workflow-skill ~/src/deck-workflow-skill
+ln -s ~/src/deck-workflow-skill/deck-workflow "${CODEX_HOME:-$HOME/.codex}/skills/deck-workflow"
+ln -s ~/src/deck-workflow-skill/deck-workflow "${CLAUDE_CONFIG_DIR:-$HOME/.claude}/skills/deck-workflow"
+```
 
 ## License
 

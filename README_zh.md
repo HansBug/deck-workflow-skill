@@ -2,7 +2,7 @@
 
 [English README](./README.md)
 
-`deck-workflow-skill` 是一个 Codex 兼容 skill 的源码仓库。它的目标不是“一次性生成一个 PPT”，而是把 PPT 制作变成一条可反复迭代的生产流程。
+`deck-workflow-skill` 是一个 agent skill 的源码仓库，同时兼容 OpenAI Codex（`$deck-workflow`）和 Anthropic Claude Code（`/deck-workflow`，或由 `SKILL.md` 的 `description` 自动触发）。它的目标不是“一次性生成一个 PPT”，而是把 PPT 制作变成一条可反复迭代的生产流程。
 
 真正可安装的 skill 位于 [`deck-workflow/`](./deck-workflow)。仓库根目录补充了 repo 级说明、维护约定和版本管理文件。
 
@@ -67,12 +67,13 @@ graph TD
 ```text
 .
 ├── AGENTS.md
+├── CLAUDE.md -> AGENTS.md        # symlink，两端读到同一份项目说明
 ├── LICENSE
 ├── README.md
 ├── README_zh.md
-└── deck-workflow/
-    ├── SKILL.md
-    ├── agents/openai.yaml
+└── deck-workflow/                # 可安装的 skill 目录
+    ├── SKILL.md                  # Codex 与 Claude Code 都会加载的 skill 正文
+    ├── agents/openai.yaml        # Codex 专属 UI 元数据；Claude Code 会忽略
     ├── references/
     └── scripts/
 ```
@@ -171,13 +172,43 @@ deck 工作区应放在用户自己的 repo 或其他持久目录里。
 
 ## 安装方式
 
-如果要直接给 Codex 使用，可以把 `deck-workflow/` 复制或软链接到 Codex 的 skills 目录：
+### Codex CLI
 
 ```bash
 cp -R ./deck-workflow "${CODEX_HOME:-$HOME/.codex}/skills/"
 ```
 
-如果你的环境支持显式 path，也可以直接引用本地 skill 路径。
+或者维持一份工作副本，用 symlink 指过去：
+
+```bash
+ln -s "$(pwd)/deck-workflow" "${CODEX_HOME:-$HOME/.codex}/skills/deck-workflow"
+```
+
+安装后通过 `$deck-workflow` 显式调用。
+
+### Claude Code
+
+```bash
+cp -R ./deck-workflow "${CLAUDE_CONFIG_DIR:-$HOME/.claude}/skills/"
+```
+
+或者用 symlink：
+
+```bash
+ln -s "$(pwd)/deck-workflow" "${CLAUDE_CONFIG_DIR:-$HOME/.claude}/skills/deck-workflow"
+```
+
+安装后通过 `/deck-workflow` 显式调用，或者依赖 `SKILL.md` 的 `description` 自动触发。
+
+### 同时装到两边
+
+clone 一份仓库，然后把 `deck-workflow/` symlink 到两个 CLI 的 skills 目录：
+
+```bash
+git clone https://github.com/HansBug/deck-workflow-skill ~/src/deck-workflow-skill
+ln -s ~/src/deck-workflow-skill/deck-workflow "${CODEX_HOME:-$HOME/.codex}/skills/deck-workflow"
+ln -s ~/src/deck-workflow-skill/deck-workflow "${CLAUDE_CONFIG_DIR:-$HOME/.claude}/skills/deck-workflow"
+```
 
 ## 许可证
 

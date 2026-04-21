@@ -1,6 +1,6 @@
 # AGENTS.md
 
-This repository hosts a Codex-compatible skill for iterative deck production.
+This repository hosts an agent skill for iterative deck production. It works with both OpenAI Codex (`$deck-workflow`) and Anthropic Claude Code (`/deck-workflow`, or auto-triggered from the `description` in `deck-workflow/SKILL.md`).
 
 ## Repository Intent
 
@@ -10,10 +10,12 @@ This repository hosts a Codex-compatible skill for iterative deck production.
 
 ## Structure
 
-- Repo-level docs live at the repository root: `README.md`, `README_zh.md`, `LICENSE`, `AGENTS.md`.
-- The installable skill lives in `deck-workflow/`.
+- Repo-level docs live at the repository root: `README.md`, `README_zh.md`, `LICENSE`, `AGENTS.md`, `CLAUDE.md`.
+- `CLAUDE.md` is a symlink to `AGENTS.md`, so both agents pick up the same project instruction when the repo is opened as a project.
+- The installable skill lives in `deck-workflow/`. Install it to `~/.codex/skills/deck-workflow` (Codex) and/or `~/.claude/skills/deck-workflow` (Claude Code).
 - Keep `deck-workflow/SKILL.md` concise. Put detailed procedures in `deck-workflow/references/`.
 - Put executable helpers in `deck-workflow/scripts/`.
+- `deck-workflow/agents/openai.yaml` is Codex-specific UI metadata; Claude Code ignores it.
 
 ## Editing Rules
 
