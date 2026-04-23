@@ -107,7 +107,21 @@ main().catch((error) => {
 - Keep summary, takeaway, and closing-adjacent visible text in the audience's working language unless the user explicitly requests otherwise.
 - Keep asset paths deterministic and local to the workspace.
 
+### Slide Function Purity
+
+Keep per-slide builder functions focused on visible content and layout. Do not parse `PPT_GUIDE.md`, run post-build validators, or regenerate source crops from inside a slide builder. Factor those into guide-parsing helpers, asset-preparation helpers, and `validate_*()` functions called from `main()`.
+
+### Centralize Visible Text At The Top Of Each Slide Function
+
+Collect the visible text for a slide into a single object or struct at the top of the builder, then feed it into helpers. When wording changes, the diff should land in one place and the guide-to-deck correspondence should stay obvious.
+
+### Assets Are Candidates, Not Truth
+
+Images under `assets/` are cached candidates, not authoritative sources. When the guide changes what to crop, highlight, or enlarge, regenerate the asset from the source document rather than reusing a stale file, even if the filename still looks right.
+
 ## Speaker Notes And Formula Contract
+
+For the full notes and formula contract (including pitfalls around hidden formulas, guide-as-notes-authority, and rendered review), see [formulas-and-notes.md](formulas-and-notes.md).
 
 For JavaScript decks, keep the same high-level contract as Python decks:
 
@@ -148,6 +162,12 @@ When a human asks for changes:
 - Rewrite `PPT_GUIDE.md` first for structure, message, and content changes
 - Rewrite `generate_ppt.js` first for layout and rendering fixes
 - Rewrite both when the slide's message and implementation both change
+
+For cross-cutting rules that apply to every generator, defer to:
+
+- [text-overflow.md](text-overflow.md) for the overflow triage ladder and high-risk component catalog
+- [delivery-checklist.md](delivery-checklist.md) for the handoff contract, including the self-check requirement and what counts as a delivery artifact
+- [review-loop.md](review-loop.md) for the rendered-review expectations the JS generator must also meet
 
 ## Failure Modes To Watch
 

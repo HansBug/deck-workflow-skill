@@ -80,6 +80,27 @@ Keep the generator explicit and reproducible:
 5. One slide builder per slide or repeated section
 6. Final `build_presentation()` plus validation helpers
 
+### Slide Function Purity
+
+Keep per-slide functions focused on visible content and layout only. In particular:
+
+- Do not parse `PPT_GUIDE.md`, open the final `.pptx` zip, run notes validators, or regenerate source crops inside a `slide_*` function.
+- Move those responsibilities into guide-parsing helpers, `ensure_*assets()` helpers, `apply_speaker_notes()`, and `validate_*()` helpers called from `build_presentation()`.
+- Give each slide function a narrow contract: receive the `Presentation` (and maybe a local content bundle), add shapes and text, return nothing side-effecting outside the slide.
+
+### Centralize Visible Text At The Top Of Each Slide Function
+
+Within a slide function, collect the visible text into a structured local variable (a small dataclass, dict, or tuple of dicts) at the top of the function, then pass that structure to reusable helpers. Avoid scattering literal strings across ten or fifteen helper call arguments; when the user revises wording, the diff should land in one obvious place and the guide-to-deck correspondence should remain easy to check.
+
+### Assets Are Candidates, Not Truth
+
+When a slide needs a cropped figure, table, or screenshot from a source document (paper PDF, app screenshot master, dashboard export):
+
+- Prefer `ensure_*assets()` or `prepare_*assets()` helpers that are idempotent but also stale-aware.
+- A cached image under `assets/` is only valid if the guide-requested crop region, resolution, and highlight still match what the cache captured.
+- When the guide changes what to emphasize, regenerate the asset from the source document instead of reusing the cache.
+- Keep asset filenames stable so the guide, generator, and review notes continue to reference the same target.
+
 Recommended high-level shape:
 
 ```python
@@ -174,6 +195,8 @@ At minimum, validate three things:
 
 ## Native Formula Guidance
 
+For the full formula / notes contract, including OMML helper layering, the two-stage save pattern, and rendered-review expectations, see [formulas-and-notes.md](formulas-and-notes.md).
+
 `python-pptx` does not provide a stable public high-level equation API. If the deck needs PowerPoint-native equations, a practical Python path is to inject Office Math / OMML XML into a paragraph.
 
 Keep the implementation layered:
@@ -220,14 +243,17 @@ Useful checks include:
 - `validate_notes_against_guide(...)`
 - `validate_formula_pages_declared(...)` or another helper that lists formula pages requiring manual visual review
 
-Generator logs should make review easier by printing:
+Generator logs should make review easier by printing a standardized block after every successful build:
 
 - Final deck path
 - Slide count
 - Parsed guide-notes count
-- Notes-slide count
+- Final `notesSlides` part count
+- Sampled or full notes-vs-guide comparison result
 - Pages that contain formulas or other high-risk layout objects
-- Any pages requiring manual render review because of formula density, long secondary-language visible text, or summary/closing risk
+- Pages flagged for manual render review because of formula density, long secondary-language visible text, highlight complexity, or summary/closing risk
+
+Pair this log with `scripts/validate_deck.py` as a structural cross-check before handoff. Treat a clean generator log plus a clean validator run as necessary but not sufficient: rendered visual review still decides whether formula, highlight, and overflow pages pass.
 
 ## Review Commands
 
@@ -251,6 +277,12 @@ When a human asks for changes:
 - Rewrite `PPT_GUIDE.md` first for narrative, content, structure, and timing changes
 - Rewrite `generate_ppt.py` first for layout, crop, font, and spacing fixes
 - Rewrite both when the requested change affects both slide meaning and implementation
+
+For routing decisions that touch text overflow, highlight occlusion, or delivery-time obligations, the general contract lives in:
+
+- [text-overflow.md](text-overflow.md) for the overflow triage ladder and high-risk component catalog
+- [delivery-checklist.md](delivery-checklist.md) for the handoff contract, including the post-notes `.pptx` rule and the pre-handoff self-check
+- [review-loop.md](review-loop.md) for the rendered-review expectations Python generators must satisfy
 
 ## Failure Modes To Watch
 

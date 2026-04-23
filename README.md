@@ -88,6 +88,9 @@ In practice, the persistent pair of `PPT_GUIDE.md` plus the generator is what ma
 - An explicit rule that code snippets, inline code labels, and terminal-style text should use monospaced fonts
 - Explicit workflow rules for important formulas: when they belong on-screen, how to explain symbols, and how to review render risks
 - Explicit workflow rules for speaker-note delivery: guide-backed notes, final-deck persistence checks, and notes/guide alignment
+- A dedicated text-overflow triage reference covering the high-risk component catalog, failure definitions, and the "remove presenter cues -> shorten copy -> widen container -> rework layout -> shrink only as last resort -> split" ladder
+- A delivery checklist that distinguishes the post-notes `.pptx` as the only acceptable handoff artifact and requires a self-review before the user sees the deck
+- A `validate_deck.py` helper that cross-checks slide count, notes persistence, empty-notes, and visible slide-id leakage
 - Rules that keep internal slide ids such as `s01-cover` in source and review artifacts instead of visible slide text
 - A helper script that renders `.pptx -> PDF -> PNG` review artifacts
 - Design guidance for common deck categories such as project updates, paper readings, training, board reviews, proposals, sales decks, investor pitches, and postmortems
@@ -141,6 +144,15 @@ Render a deck into reviewable PDF/PNG artifacts:
 
 ```bash
 python ./deck-workflow/scripts/render_review.py ./tmp/example-deck/deck.pptx --output-dir ./tmp/example-deck/rendered
+```
+
+Validate a finished deck before handoff:
+
+```bash
+python ./deck-workflow/scripts/validate_deck.py ./tmp/example-deck/deck.pptx \
+  --guide ./tmp/example-deck/PPT_GUIDE.md \
+  --expect-notes \
+  --expect-slides 12
 ```
 
 ## Backend Policy

@@ -23,6 +23,9 @@ Follow these rules whenever the deck is meant to survive more than one quick pas
 - Keep stable slide ids for review and change routing, but do not surface ids such as `s01-cover` on visible slides unless the user explicitly wants them.
 - Treat speaker notes as a deliverable when the deck is meant to be presented, not as optional guide-only prose.
 - Put important formulas on-screen when they carry the core argument, and explain their symbols and meaning for the audience.
+- Treat cached assets under `assets/` as candidates, not as the authoritative source; when the guide changes what to crop, highlight, or enlarge, regenerate from the source document instead of reusing stale images.
+- When the deck must embed speaker notes, treat the post-notes `.pptx` (the file after the notes are actually persisted) as the only delivery artifact, not the intermediate pre-notes file.
+- Run a self-check on rendered output before handing a deck to the user; obvious overflow, occlusion, missing notes, or unreadable tables are not acceptable as first-review-for-user material.
 - Do not declare success without reviewing rendered output.
 
 If a user asks for an existing deck to be changed and no guide exists, reconstruct a minimal guide first before making substantial changes.
@@ -95,6 +98,7 @@ Keep these generator rules:
 - Keep visible text, speaker notes, and deck metadata in sync with the guide.
 - If notes must be embedded, verify the final `.pptx` actually contains notes for the expected slides.
 - If formulas are important, use a reliable native-equation or deterministic asset path and treat formula pages as high-risk render-review pages.
+- Keep per-slide builder functions focused on visible content and layout; factor guide parsing, zip inspection, notes writing, asset cropping, and validators into separate helpers invoked from the build entry point.
 - Use stable output paths so review commands and CI-like checks stay repeatable.
 
 If the official `$slides` skill is available and the project is not already committed to another stack, prefer its PptxGenJS helpers and validation utilities for low-level authoring.
@@ -161,15 +165,22 @@ Follow these review rules:
 - Prefer the stable review path `.pptx -> PDF -> per-slide PNG`.
 - Review rendered output, not only source code or XML.
 - Check for overflow, clipping, overlap, awkward wrapping, weak hierarchy, and unreadable charts or tables.
+- Treat high-risk components (titles, chips, kickers, number cards, KV cards, captions, footer bars, right-column summary cards) as overflow-prone by default and verify them on the rendered page, not from source coordinates.
+- When text overflows or wraps badly, follow the triage ladder in [references/text-overflow.md](references/text-overflow.md) instead of shrinking fonts first.
+- Keep generator-controlled visible text above a readable floor, roughly `12pt` or larger for titles, body, chips, captions, number cards, and callouts; use smaller sizes only for pure page numbers or minimal footer marks.
 - Check important formulas for clipping, oversized display rendering, unreadable subscripts/superscripts, and missing symbol explanations.
 - Check that required speaker notes are present in the final deck and still match `PPT_GUIDE.md`.
+- Check that highlights, masks, and emphasis labels (`ours`, `best`, `key result`, `SOTA`) do not cover the content they exist to emphasize; prefer outline boxes, thin borders, or labels placed outside the highlighted region.
 - Check that internal ids, routing labels, and other maker-only metadata did not leak into visible slide content.
 - Check that code snippets, inline code labels, and terminal-style text actually render in a monospaced font instead of the body font.
+- Check that summary, takeaway, limitation, and closing-adjacent pages keep their visible text in the audience's primary language; long secondary-language paragraphs on these pages usually belong in speaker notes.
 - Re-review after fixes because one layout fix often causes another regression.
 - Record issues with slide ids and routing decisions in `review/notes.md`.
 - Do not hand obvious visual bugs to the user as the first review pass if you can catch them yourself.
 
 Read [references/review-loop.md](references/review-loop.md) before sign-off.
+Read [references/text-overflow.md](references/text-overflow.md) when any visible text shows signs of overflow, wrapping, edge-hugging, or silent font shrinkage.
+Read [references/delivery-checklist.md](references/delivery-checklist.md) right before handing the deck to the user.
 
 ## Editing Existing Decks
 
@@ -191,6 +202,8 @@ Do not call the deck update complete until:
 - The deck has been regenerated from source.
 - A fresh render has been reviewed.
 - Major visual issues are fixed or explicitly deferred.
+- When notes are required, they are present in the final `.pptx`, not only in the guide, and the delivery file is the post-notes `.pptx`.
+- `scripts/validate_deck.py` or an equivalent structural check has been run on the final `.pptx` for any non-trivial deck. The validator catches wrong slide counts, missing or orphaned `notesSlides` parts, empty notes, and visible slide-id leakage; rendered review is still required for formula pages, tables, highlight-heavy figures, and summary/closing slides.
 - The guide, generator, and rendered result do not contradict each other.
 
 ## References
@@ -199,6 +212,7 @@ Do not call the deck update complete until:
 - Read [references/production-loop.md](references/production-loop.md) for the mandatory end-to-end iteration loop.
 - Read [references/guide-schema.md](references/guide-schema.md) when drafting or reconstructing `PPT_GUIDE.md`.
 - Read [references/formulas-and-notes.md](references/formulas-and-notes.md) when formulas, mathematical notation, embedded notes, or speakable deck delivery matter.
+- Read [references/text-overflow.md](references/text-overflow.md) when visible text risks wrapping unnaturally, escaping a container, or being silently shrunk.
 - Read [references/change-routing.md](references/change-routing.md) when deciding whether to edit the guide, the generator, or both.
 - Read [references/design-principles.md](references/design-principles.md) for reusable visual and audience-facing slide rules.
 - Read [references/deck-types.md](references/deck-types.md) to adapt the workflow to common deck categories.
@@ -206,6 +220,8 @@ Do not call the deck update complete until:
 - Read [references/generator-javascript.md](references/generator-javascript.md) before using a JS backend.
 - Read [references/generator-python.md](references/generator-python.md) before using a Python backend.
 - Read [references/review-loop.md](references/review-loop.md) before review, re-review, or sign-off.
+- Read [references/delivery-checklist.md](references/delivery-checklist.md) before handing the deck off to the user.
 - Run `scripts/detect_deck_environment.py` to inspect backend and review-tool readiness in the current environment.
 - Run `scripts/render_review.py` when you want a stable `.pptx -> PDF -> PNG` review path.
 - Run `scripts/init_deck_workspace.py` to scaffold a new guide-first deck workspace.
+- Run `scripts/validate_deck.py` to confirm slide count, notes persistence, and guide-notes alignment on any non-trivial deck.

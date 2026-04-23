@@ -72,6 +72,35 @@ Treat formulas as high-risk layout objects.
 - Put symbol explanations near the formula when the audience needs them; do not hide every symbol in notes.
 - On summary, takeaway, limitation, and closing-adjacent pages, keep visible formula references short. Long secondary-language explanations should move to notes unless the audience expects them.
 
+### LibreOffice/`soffice` Rendering Delta
+
+When `.pptx -> PDF` goes through LibreOffice/`soffice`, PowerPoint-native equations often render visually larger than they do in PowerPoint itself. The high-risk objects are, in roughly decreasing severity:
+
+- Sums and products with visible upper/lower limits
+- Long function or method names (`softmax`, `LayerNorm`, `kl_divergence`, etc.)
+- Multi-layer subscripts and superscripts, especially stacked together
+- Expectations with long conditioning expressions
+- Display-style fractions with tall numerators or denominators
+
+When one of these blows up the row or overlaps neighboring content, prefer this fix order:
+
+1. Rewrite into a compact inline form (move limits to subscripts/superscripts beside the operator, shorten function names if audience-acceptable).
+2. Split one long formula into two stacked rows with a short connective phrase between them.
+3. Enlarge the formula container height and adjust neighboring blocks; do not just shift the formula on top of other content.
+4. Only if none of the above works, rasterize a pre-measured asset with a recorded source expression and a visible symbol legend.
+
+Re-render after every formula edit. A source-level change that looks harmless can break the rendered page through LibreOffice.
+
+### Formula-Band Height Parameterization
+
+When a single slide carries a formula plus an original figure plus number cards or summary cards, do not hardcode formula-band, figure-frame, and card-column heights with the assumption that "future formulas will fit". Parameterize at least:
+
+- The vertical height reserved for the formula (tall enough for any planned expression on this page type).
+- The vertical height reserved for the figure frame.
+- The number or density of cards allowed in the neighboring column.
+
+When the guide later requires a taller formula, adjust these parameters together instead of squeezing content into the old band.
+
 Rendered review must check:
 
 - Formula not clipped, overlapped, or pushed out of its background shape.

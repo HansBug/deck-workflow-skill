@@ -48,6 +48,20 @@ If the deck is meant to be spoken live and the user does not specify otherwise:
 - Keep timing in the guide rather than guessing from slide body length
 - Treat `PPT_GUIDE.md` as the source of truth for speaker notes when the final deck must embed them
 
+### Cover And Closing Content Contracts
+
+When the deck is spoken live, the guide should lock in concrete content for the first and last slides instead of leaving them as generic placeholders:
+
+- Cover slide: working or final title, subtitle or framing line when appropriate, presentation date or period, and the presenter's name. If the deck expects a bilingual presenter name (e.g. Chinese plus English), the guide should record both forms so the generator does not have to guess.
+- Summary slide: sits immediately before the closing slide when both exist. It carries the takeaways the audience should remember; it does not introduce new technical content that was not supported earlier.
+- Closing slide: reserved for `Q&A`, thanks, or a short wrap-up phrase. It does not carry new claims, new numbers, or new experiments. Long secondary-language prose on this slide is a sign the content belongs in speaker notes or in an earlier slide.
+
+### Per-Page Audience-Language Purity
+
+For spoken decks with a dominant audience language, mark any pages where visible text must stay primarily in that language. Summary, takeaway, limitation, and closing-adjacent pages almost always qualify. Short proper nouns - paper titles, system names, benchmark names, model names - may stay in their original language even on these pages, but long secondary-language paragraphs should route into speaker notes.
+
+When creating the guide, record the page's primary-language requirement alongside its other slide-level fields rather than leaving it implicit, so a later generator cannot accidentally fill the summary slide with long English prose on a Chinese talk or long Chinese prose on an English talk.
+
 ## Slide-Level Fields
 
 Give every slide a stable id, then document the same fields for each slide:

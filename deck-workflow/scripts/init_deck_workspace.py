@@ -399,13 +399,22 @@ def review_commands(generator_name: str, build_command: str, backend: str) -> st
             python path/to/render_review.py deck.pptx --output-dir rendered
             ```
 
+            ## Structural Validation
+
+            ```bash
+            python path/to/validate_deck.py deck.pptx --guide PPT_GUIDE.md --expect-notes --expect-slides <expected>
+            ```
+
+            Use this before handoff to catch wrong slide counts, missing notes parts, empty notes, or visible slide-id leakage.
+
             ## Workflow Reminder
 
             - Change structure, message, timing, or slide order in `PPT_GUIDE.md`.
             - Change layout, spacing, cropping, fonts, or visual fixes in `{generator_name}`.
             - Change formula choice, notes policy, or symbol explanations in `PPT_GUIDE.md`; change formula rendering or notes persistence bugs in `{generator_name}`.
+            - When text overflows or wraps badly, use the ladder in `references/text-overflow.md` rather than shrinking fonts first.
             - Keep stable slide ids in the guide, code, and review notes rather than visible slide text unless explicitly requested.
-            - If notes are part of delivery, verify the final `.pptx` still contains them.
+            - If notes are part of delivery, verify the final `.pptx` still contains them and treat the post-notes file as the only handoff artifact.
             - If formulas are important, manually review the rendered formula pages after every meaningful edit.
             - Rebuild and rerender after every meaningful edit.
             """
@@ -424,12 +433,16 @@ def review_template() -> str:
         - Scope: `TODO`
         - Reviewer: `TODO`
         - Render Used: `TODO`
+        - Validator Run: `TODO` (e.g. `scripts/validate_deck.py deck.pptx --expect-notes`)
 
         ## Focus Checks
 
         - `Important formulas are visible when required, fit their containers, and explain key symbols`
         - `Speaker notes exist in the final deck and still match PPT_GUIDE.md when required`
         - `Summary/takeaway/closing-adjacent pages keep visible text in the audience's working language`
+        - `High-risk text components (titles, chips, captions, number cards, summary cards) do not overflow or silently shrink`
+        - `Highlight boxes and emphasis labels do not cover the content they annotate`
+        - `Cropped figures and tables still match the guide-requested region; no stale assets reused`
 
         ## Open Issues
 

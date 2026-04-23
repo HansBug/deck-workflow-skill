@@ -78,6 +78,55 @@ Check at least these items:
 - Speaker notes still match the implemented slide
 - Summary, takeaway, and closing-adjacent pages do not carry long visible text that belongs in notes
 
+### Text Overflow Failure Definitions
+
+Treat any of these as a real failure, not a cosmetic nit, and resolve before handoff:
+
+- A title, chip, strip, or card heading that should be one line renders on two lines
+- Text bleeds outside its background rectangle, card, tag, caption strip, or table cell
+- Text stays inside the container but hugs an edge, corner, shadow, or border with no padding
+- Auto-wrapping breaks a phrase, number-with-unit, model name, benchmark name, or conclusion at an unnatural point
+- Text fits only because font size dropped below the page hierarchy (title smaller than body, body smaller than chips, chips smaller than the footer)
+- Text fits only because autofit or disabled wrapping silently clipped the tail
+- Fixed-width chips, badges, captions, number cards, or right-column summary cards with long English words, acronyms, or mixed Chinese-English text have been compressed or crowded
+
+See [text-overflow.md](text-overflow.md) for the triage ladder and component-specific fix preferences.
+
+### Highlight And Occlusion Check
+
+On any slide with highlight boxes, masks, color panels, or emphasis labels, confirm:
+
+- The highlight does not cover the content it is meant to emphasize; switch to an outline box, thin border, or side-placed label if it does
+- `ours`, `best`, `key result`, `new`, or `SOTA` tags sit outside or on the margin of the region they annotate, not over the numbers or axis labels
+- Z-order puts the underlying evidence above the overlay where the audience needs to read it
+- Opacity is not being used as a substitute for a proper outline
+
+### Three-Second Self-Check
+
+For each content page, ask three questions while looking at the rendered output:
+
+1. Can a cold audience member state the main point in about three seconds?
+2. Do they know where to look first on the page?
+3. Are the key numbers and labels readable at a normal projection or screen-share scale?
+
+If any answer is no on a content page, rework the page instead of relying on narration or font adjustment to rescue it.
+
+### Language-Purity Check For Spoken Decks
+
+When the deck is spoken in a primary audience language:
+
+- Summary, takeaway, limitation, and closing-adjacent pages keep visible text in that primary language, apart from proper nouns such as paper, model, and benchmark names and very short technical terms
+- Long secondary-language prose that sneaked onto these pages has been moved into speaker notes
+- The closing/Q&A slide carries a wrap-up phrase in the primary language, not a paragraph of secondary-language content
+
+### Source-Over-Cache Check For Figures And Tables
+
+For every figure or table taken from a source document such as a paper PDF:
+
+- The crop still reflects the region the guide currently asks to show; if the guide has changed what to emphasize, the crop has been regenerated rather than reused from `assets/`
+- The crop is high-resolution enough for key numbers and axis labels to be read at projection scale
+- Highlight overlays still match the current crop rather than a previous version of it
+
 ## Minimum Content Checklist
 
 Check at least these items:
@@ -123,3 +172,7 @@ Do not call the deck done until:
 - The new render does not show obvious regressions
 - Open review issues are either closed or explicitly deferred
 - You have completed at least one real fix-and-rerender cycle for non-trivial work
+- For speakable decks, the delivery file is the post-notes `.pptx` (the file that has `ppt/notesSlides/notesSlide*.xml` parts), not the pre-notes intermediate
+- `scripts/validate_deck.py` or an equivalent structural check has been run on the delivery file
+
+See [delivery-checklist.md](delivery-checklist.md) for the final handoff contract.

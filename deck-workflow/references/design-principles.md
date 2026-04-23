@@ -46,6 +46,24 @@ Do not hard-code one universal font size rule. Use context:
 - If a slide routinely exceeds about one minute of speaking time, check whether it should be split.
 - Summary, takeaway, limitation, and closing-adjacent pages should stay in the audience's working language by default; avoid long secondary-language paragraphs unless the user explicitly wants them.
 
+### High-Risk Components
+
+These components are overflow-prone by default; expect to verify them on every rerender:
+
+- Slide titles, especially with mixed Chinese-English words or long system/model names
+- Kicker, subtitle, or top-conclusion strips directly under a title
+- Fixed-width chips, pills, badges, status tags
+- Number cards, KV cards, compact summary cards
+- Image captions and figure-annotation bars
+- Footer bars and bottom micro-strips
+- Right-column summary cards in two-column layouts
+
+For specific fix preferences and the triage ladder, see [text-overflow.md](text-overflow.md).
+
+### Default Visible-Text Size Floor
+
+Unless the user explicitly wants smaller text, generator-controlled visible text should sit above roughly `12pt` for titles, body, chips, captions, number cards, and callouts. Pure page numbers or minimal footer labels may go smaller. Treat this as a floor, not a target; projected talks usually need considerably larger text.
+
 ## Code And Terminal Text
 
 - Render code snippets, inline code labels, shell commands, filenames shown as code, and other code-like visible text in a monospaced font by default.
@@ -82,6 +100,16 @@ When text overflows or wraps badly, prefer this order:
 - Do not let highlight boxes or labels cover the evidence they are meant to explain.
 - If a source table is readable after cropping and enlarging, prefer that over needless redrawing.
 - Redraw only when the cropped source still fails readability or emphasis needs.
+- Treat the source document (paper PDF, screenshot master, dashboard export) as authoritative; existing images under `assets/` are candidates, not truth. When the guide changes what to crop or highlight, regenerate the asset instead of reusing the cached one.
+
+### Highlights Without Occlusion
+
+When a slide uses highlight boxes, masks, or emphasis labels (`ours`, `best`, `key result`, `new`, `SOTA`):
+
+- Prefer an outline box over a filled rectangle when the interior must stay readable.
+- Place labels outside the highlighted region (above, beside, or in a caption strip) when the interior has no safe empty area.
+- Adjust z-order so the evidence stays on top of soft overlays where the audience needs to read it.
+- Reduce overlay opacity only when an outline is not feasible; verify in the rendered PDF/PNG, not only in source.
 
 ## Audience View vs Speaker View
 

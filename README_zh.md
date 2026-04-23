@@ -88,6 +88,9 @@ graph TD
 - 明确要求代码片段、行内代码标签、终端命令等代码相关可见文本默认使用等宽字体
 - 明确补充了重要公式的工作流规范：什么时候必须上屏、如何解释符号、以及如何做渲染验收
 - 明确补充了 speaker notes 交付规范：notes 以 guide 为准、最终 `.pptx` 必须真正写入 notes、并且要校验和 guide 一致
+- 独立的文本溢出 triage 规范：涵盖高风险组件清单（标题、chip、数字卡、caption、右栏总结卡等）、失败判定（单行被压成两行、文字越界、贴边、自动换行断在坏位置、字号被压破层级）以及“先移除讲者视角文案 → 缩短观众文案 → 同时放大文本框与底色块 → 回调局部布局 → 只作为最后手段微调字号 → 实在不行就拆页”的 6 步 triage 决策顺序
+- 明确的交付规范：把“写完 notes 并再次保存后的 `.pptx`”定义为唯一可交付产物，要求交付前至少完成一轮视觉自检，不把明显问题当作第一轮让用户审的素材
+- 新增 `validate_deck.py` 交叉校验脚本：核对页数、`notesSlides` 是否真的落盘、notes 是否为空、观众可见页面有没有泄漏 `s01-cover` 这类制作期 id
 - 明确要求像 `s01-cover` 这样的 slide id 只用于源码和 review，不应直接出现在观众可见页面里
 - 提供一个稳定的 `pptx -> pdf -> png` 视觉检查脚本
 - 补充了项目汇报、paper reading、培训、board review、proposal、sales、investor pitch、postmortem 等常见 deck 类型的制作要点
@@ -141,6 +144,15 @@ python ./deck-workflow/scripts/detect_deck_environment.py
 
 ```bash
 python ./deck-workflow/scripts/render_review.py ./tmp/example-deck/deck.pptx --output-dir ./tmp/example-deck/rendered
+```
+
+在交付前对最终 `.pptx` 做结构性校验：
+
+```bash
+python ./deck-workflow/scripts/validate_deck.py ./tmp/example-deck/deck.pptx \
+  --guide ./tmp/example-deck/PPT_GUIDE.md \
+  --expect-notes \
+  --expect-slides 12
 ```
 
 ## Backend 策略

@@ -73,3 +73,7 @@ repo/
 
 Rendered outputs can be kept under the workspace if they are part of the ongoing review loop.
 If they are too large or too noisy for version control, keep the commands and paths stable even if the PNGs themselves are not committed.
+
+## Validator Placement
+
+Keep the `scripts/validate_deck.py` command pattern discoverable from the workspace's `review/commands.md`. The validator is cheap to run, catches the common handoff failures (wrong slide count, missing `notesSlides` parts, empty notes), and complements the visual review path rather than replacing it.

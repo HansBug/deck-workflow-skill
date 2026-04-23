@@ -25,7 +25,7 @@ This repository hosts an agent skill for iterative deck production. It works wit
    - the relevant file under `deck-workflow/references/`
    - `README.md` and `README_zh.md` if user-facing behavior changed
 3. When the skill trigger surface or UI-facing summary changes, review `deck-workflow/agents/openai.yaml` and regenerate or edit it as needed.
-4. When adding or editing scripts under `deck-workflow/scripts/`, run a real smoke test.
+4. When adding or editing scripts under `deck-workflow/scripts/`, run a real smoke test. For `validate_deck.py`, run it against a real `.pptx` (e.g. an existing paper-reading deck) to confirm that structure, notes, and slide-id checks behave as expected.
 5. After skill changes, run:
 
 ```bash
@@ -47,6 +47,8 @@ python /home/hansbug/.codex/skills/.system/skill-creator/scripts/quick_validate.
    - visible slide text is for the audience
    - notes are for the presenter
 12. Keep the guidance broad enough to cover common deck categories, not only academic talks.
+13. Keep the text-overflow triage ladder, the highlight-occlusion rules, and the delivery checklist in sync across `SKILL.md`, `references/text-overflow.md`, `references/delivery-checklist.md`, `references/review-loop.md`, and the two generator guides. These rules represent hard-won lessons from real deck iterations; do not quietly weaken them when adding unrelated content.
+14. Keep `scripts/validate_deck.py` aligned with `references/delivery-checklist.md` and the "done criteria" in `SKILL.md`. When one changes, review the other.
 
 ## Preferred Maintenance Direction
 

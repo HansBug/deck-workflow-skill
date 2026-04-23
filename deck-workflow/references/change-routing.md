@@ -84,6 +84,24 @@ Use these quick mappings when triaging review comments:
 - "The notes do not match the guide anymore" -> usually `script`, sometimes `both` if the guide must change too
 - "We need a stronger opening for this audience" -> `guide`
 - "This page should become two pages" -> `both`
+- "This chip/card has a long English term that is wrapping ugly" -> usually `script` for container sizing, sometimes `guide` when the right fix is shortening the wording
+- "The highlight is covering the numbers it is highlighting" -> `script`, via outline box, label placement, or z-order
+- "The summary slide has a paragraph of English on a Chinese talk" -> usually `guide`, with the prose moved into speaker notes
+- "Notes are missing from the final deck even though the guide has them" -> `script` for notes persistence; check two-stage save and `ppt/notesSlides` parts
+- "The cropped table is using an old highlight region" -> `script`, via `ensure_*assets()` re-cropping from the source document
+
+## Text Overflow Triage
+
+When a review comment is fundamentally about overflow, wrapping, edge-hugging, or silent font shrinkage, route to the generator and follow the triage ladder in [text-overflow.md](text-overflow.md) instead of picking the fastest visual patch. Ordered preference:
+
+1. Remove presenter-only text from the visible slide and relocate it to speaker notes or the guide.
+2. Shorten the audience-facing wording.
+3. Enlarge the text container together with its background shape.
+4. Rework the local layout.
+5. Only then consider a modest font-size reduction that preserves page hierarchy.
+6. If needed, split the slide.
+
+Route steps 1 and 6 through `guide` when they change slide intent or slide count. Route steps 2-5 through `script`. Route both when the change alters both wording and implementation.
 
 ## Anti-Patterns
 

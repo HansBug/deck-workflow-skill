@@ -168,6 +168,26 @@ Common pitfall:
 
 - Replaying the paper section by section instead of building a presentation storyline.
 
+### Pacing Heuristic Example
+
+When the audience language is Chinese and the talk is a spoken paper reading, a reasonable default pacing is around `180` effective characters per minute, where each Chinese character counts as one, each English or numeric token counts as roughly two, and punctuation/whitespace does not count. Under that pacing:
+
+- `15 minutes` -> roughly `13-14` slides
+- `20 minutes` -> roughly `17` slides (cover and closing included)
+- `30 minutes` -> roughly `23-24` slides
+
+These are starting points, not rules. English talks, deeply technical audiences, or unfamiliar notation usually need more time per slide, not less. Always measure the actual read-aloud script rather than guessing from slide body length.
+
+### Anticipated Questions As A Review Axis
+
+Research talks often fail in the Q&A rather than on the slides. Before sign-off, sanity-check the deck against likely questions from three viewpoints:
+
+- A curious peer who is new to the topic: does the deck define the core terms they need, not just restate them?
+- A critical colleague who works nearby: can the deck defend the exact numbers it quotes, the baselines it compares against, and the experimental scope?
+- A busy leader or decision maker: does the deck make clear what to take away, what is still unresolved, and what action or follow-up is implied?
+
+Where the answer is weak, the fix is usually in the guide (narrative, emphasis, added slide) rather than in layout.
+
 ## 8. Webinar, Keynote, Or Product Launch
 
 Goal:

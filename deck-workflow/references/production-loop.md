@@ -139,5 +139,9 @@ Before delivery:
 - Ensure the guide, generator, and rendered deck agree with each other
 - Ensure review notes are either closed or clearly deferred
 - Ensure the latest render is the one you actually inspected
+- For speakable decks, confirm the delivery file is the post-notes `.pptx` (the file that contains `ppt/notesSlides/notesSlide*.xml` parts), not an intermediate pre-notes file
+- Run `scripts/validate_deck.py` or an equivalent structural check on the delivery file and resolve any failing check before handoff
 
 If you cannot render the deck in the current environment, say so explicitly and do not pretend that review is complete.
+
+See [delivery-checklist.md](delivery-checklist.md) for the full handoff contract.
