@@ -6,6 +6,20 @@
 
 真正可安装的 skill 位于 [`deck-workflow/`](./deck-workflow)。仓库根目录补充了 repo 级说明、维护约定和版本管理文件。
 
+## 效果演示
+
+![Claude Code 新手向科普 — 由 deck-workflow 自己生成的 6 页 deck](./assets/claude-code-intro/preview.png)
+
+仓库里附带了一份"由 skill 自己做出来"的自我演示：一份 6 页英文 deck，面向从没写过代码、甚至非计算机背景的新手介绍 Claude Code。工作区在 [`assets/claude-code-intro/`](./assets/claude-code-intro)，[`PPT_GUIDE.md`](./assets/claude-code-intro/PPT_GUIDE.md)、[`generate_ppt.py`](./assets/claude-code-intro/generate_ppt.py)、最终 [`ClaudeCode_intro.pptx`](./assets/claude-code-intro/ClaudeCode_intro.pptx) 以及 [每一页的 PNG](./assets/claude-code-intro/rendered) 都放在一起。
+
+想复现这份 deck，把下面这一句英文 prompt 贴给一个装好了 `deck-workflow` 的 Claude Code 或 Codex 会话就行：
+
+```text
+Use the deck-workflow skill to make a playful 6-page English Claude Code primer for non-coder beginners, and save the workspace at assets/claude-code-intro/.
+```
+
+单页链接：[01 封面](./assets/claude-code-intro/rendered/slide-001.png) · [02 这是什么](./assets/claude-code-intro/rendered/slide-002.png) · [03 用起来是什么感觉](./assets/claude-code-intro/rendered/slide-003.png) · [04 为什么新手坚持得下去](./assets/claude-code-intro/rendered/slide-004.png) · [05 第一天能做什么](./assets/claude-code-intro/rendered/slide-005.png) · [06 怎么开始](./assets/claude-code-intro/rendered/slide-006.png)
+
 ## 这个 Skill 解决什么问题
 
 适用于下面这类需要持续迭代的 deck 工作：
